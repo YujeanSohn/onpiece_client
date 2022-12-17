@@ -12,11 +12,14 @@ const Wrapper = styled.button`
         return props.theme.accentColor;
       case "cancel":
         return props.theme.cancelBtnColor;
+      case "login":
+        return props.theme.mainColor;
       default:
         return props.theme.basicBtnColor;
     }
   }};
   color: ${(props) => props.color};
+  font-size: ${(props) => props.size};
 `;
 
 function Button({ width, type, text = "button", handler }) {

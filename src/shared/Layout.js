@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-
 import Button from "../components/Button";
 
 const Header = styled.div`
@@ -26,18 +25,22 @@ const Body = styled.div`
 `;
 
 const Layout = React.forwardRef((props, ref) => {
-  return (
-    <>
-      <Header ref={ref}>
-        <Logo>🛶 Onpiece</Logo>
-        <div>
-          <WelcomeMsg>유진님 환영합니다.</WelcomeMsg>
-          <Button type="accent" text={`LOGOUT`} />
-        </div>
-      </Header>
-      <Body>{props.children}</Body>
-    </>
-  );
+  if (window.location.pathname !== "/login") {
+    return (
+      <>
+        <Header ref={ref}>
+          <Logo>🛶 Onpiece</Logo>
+          <div>
+            <WelcomeMsg>유진님 환영합니다.</WelcomeMsg>
+            <Button type="accent" text={`LOGOUT`} />
+          </div>
+        </Header>
+        <Body>{props.children}</Body>
+      </>
+    );
+  } else {
+    return <>{props.children}</>;
+  }
 });
 
 export default Layout;

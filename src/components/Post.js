@@ -6,7 +6,7 @@ import Progressbar from "./Progressbar";
 import dateTimeParser from "../tools/dateTimeParser";
 
 const Wrapper = styled.div`
-  width: 20%;
+  width: ${(props) => props.width};
   padding: 2%;
   margin-top: 20px;
   float: left;
@@ -51,9 +51,9 @@ const Info = styled.div`
   width: 68%;
 `;
 
-function Post({ post }) {
+function Post({ width = 20, post }) {
   return (
-    <Wrapper>
+    <Wrapper width={`${width}%`}>
       <Title>{post.title}</Title>
       <SubTitle>👨‍✈{post.nickname} 선장님이 이끄는 스터디</SubTitle>
       <TagBox>
