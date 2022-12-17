@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Tag from "./Tag";
 import Progressbar from "./Progressbar";
 import dateTimeParser from "../tools/dateTimeParser";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 20%;
@@ -52,8 +53,9 @@ const Info = styled.div`
 `;
 
 function Post({ post }) {
+  const navigate = useNavigate();
   return (
-    <Wrapper>
+    <Wrapper onClick={() => navigate(`/post/${post.id}`)}>
       <Title>{post.title}</Title>
       <SubTitle>👨‍✈{post.nickname} 선장님이 이끄는 스터디</SubTitle>
       <TagBox>

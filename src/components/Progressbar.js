@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-  width: 100%;
+  width: ${(props) => props.width};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -33,10 +33,10 @@ const Info = styled.div`
   font-weight: 600;
 `;
 
-function Progressbar({ denominator, numerator }) {
+function Progressbar({ width = 100, denominator, numerator }) {
   const percentage = Math.trunc((numerator / denominator) * 100);
   return (
-    <Wrapper>
+    <Wrapper width={`${width}%`}>
       <BarWrapper>
         <Bar percentage={`${percentage}%`}></Bar>
       </BarWrapper>
