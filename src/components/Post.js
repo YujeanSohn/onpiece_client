@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import Tag from "./Tag";
 import Progressbar from "./Progressbar";
+import dateTimeParser from "../tools/dateTimeParser";
 
 const Wrapper = styled.div`
   width: 20%;
@@ -51,15 +52,6 @@ const Info = styled.div`
 `;
 
 function Post({ post }) {
-  const parseDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일 ${date.getHours()}:${
-      date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()
-    }까지`;
-  };
-
   return (
     <Wrapper>
       <Title>{post.title}</Title>
@@ -74,7 +66,7 @@ function Post({ post }) {
       </TagBox>
       <InfoBox>
         <Label>모집기간</Label>
-        <Info>{parseDate(post.recruitmentEndDay)}</Info>
+        <Info>{`${dateTimeParser(post.recruitmentEndDay)} 까지`}</Info>
       </InfoBox>
       <InfoBox>
         <Label>스터디기간</Label>
