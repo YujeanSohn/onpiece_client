@@ -28,7 +28,7 @@ function LoginPage() {
       </Left>
       <Right>
         {show && (
-          <LoginBox>
+          <form>
             <Logo>🛶 Onpiece</Logo>
             <LoginForm>
               <IDPW>
@@ -56,10 +56,10 @@ function LoginPage() {
               ></Button>
               <Button type={`login`} text={`로그인`} width={`180px`} />
             </ButtonBox>
-          </LoginBox>
+          </form>
         )}
         {!show && (
-          <RegisterBox>
+          <form>
             <Logo>🛶 Onpiece</Logo>
             <RegisterForm>
               <InputWrapper>
@@ -112,7 +112,7 @@ function LoginPage() {
               <Button text={`뒤로가기`} width={`180px`} handler={toggle} />
               <Button type={`login`} text={`가입하기`} width={`180px`} />
             </ButtonBox>
-          </RegisterBox>
+          </form>
         )}
       </Right>
     </Container>
@@ -123,26 +123,31 @@ const Container = styled.div`
   height: 120vh;
   display: flex;
 `;
+
 const Left = styled.div`
   width: 50%;
   height: 100%;
+
   @media screen and (max-width: 1000px) {
     display: none;
   }
-  background-color: #74b9ff;
+  background-color: ${(props) => props.theme.mainColor}; ;
 `;
 
 const Title = styled.div`
   margin-top: 100px;
   text-align: center;
 `;
+
 const First = styled.div`
   font-size: 30px;
 `;
+
 const Second = styled.div`
   margin-top: 20px;
   font-size: 25px;
 `;
+
 const Offer = styled.div`
   margin-top: 50px;
   margin-left: 30px;
@@ -172,6 +177,7 @@ const Right = styled.div`
     width: 100%;
   }
 `;
+
 const Logo = styled.div`
   text-align: center;
   margin-top: 200px;
@@ -182,7 +188,7 @@ const Logo = styled.div`
     margin-left: 50px;
   }
 `;
-const LoginBox = styled.form``;
+
 const LoginForm = styled.div`
   border-radius: 10px;
   background-color: #74b9ff;
@@ -194,6 +200,7 @@ const LoginForm = styled.div`
   display: flex;
   justify-content: center;
 `;
+
 const IdInput = styled.input`
   border: white;
   width: 300px;
@@ -204,6 +211,7 @@ const IdInput = styled.input`
   font-size: 15px;
   text-indent: 10px;
 `;
+
 const PWInput = styled.input`
   border: white;
   width: 300px;
@@ -230,11 +238,11 @@ const ButtonBox = styled.div`
     align-items: center;
   }
 `;
+
 const IDPW = styled.label`
   font-size: 20px;
   margin-left: 40px;
 `;
-const RegisterBox = styled.form``;
 
 const RegisterForm = styled.div`
   border-radius: 10px;
@@ -260,6 +268,7 @@ const Register = styled.input`
   font-size: 15px;
   text-indent: 10px;
 `;
+
 const InputWrapper = styled.div`
   width: 100%;
   margin: 20px 0;
@@ -267,11 +276,13 @@ const InputWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
 `;
+
 const Label = styled.div`
   font-size: 15px;
   width: 15%;
   line-height: 50px;
 `;
+
 const Content = styled.div`
   width: 85%;
 `;

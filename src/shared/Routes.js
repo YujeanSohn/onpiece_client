@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Home from "../pages/Home";
 import LoginPage from "../pages/LoginPage";
-import PostEditPage from "../pages/PostEditPage";
 import Layout from "./Layout";
 
 const Router = () => {
@@ -19,7 +18,6 @@ const Router = () => {
         <Routes>
           <Route path="/" element={<Home minHeight={bodyHeight} />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/postedit" element={<PostEditPage />} />
         </Routes>
       </BrowserRouter>
     </Layout>

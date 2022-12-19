@@ -19,7 +19,6 @@ const Wrapper = styled.button`
     }
   }};
   color: ${(props) => props.color};
-  font-size: ${(props) => props.size};
 `;
 
 function Button({ width, type, text = "button", handler }) {
