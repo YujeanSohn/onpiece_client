@@ -20,7 +20,6 @@ const initialState = {
   ],
   isLoading: false,
 };
-
 const postsSlice = createSlice({
   name: "posts",
   initialState,
