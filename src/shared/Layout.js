@@ -15,6 +15,9 @@ const Header = styled.div`
 const Logo = styled.h1`
   font-size: 30px;
   font-weight: 800;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const WelcomeMsg = styled.span`
@@ -30,7 +33,7 @@ const Layout = React.forwardRef((props, ref) => {
     return (
       <>
         <Header ref={ref}>
-          <Logo>🛶 Onpiece</Logo>
+          <Logo onClick={() => window.location.replace("/")}>🛶 Onpiece</Logo>
           <div>
             <WelcomeMsg>유진님 환영합니다.</WelcomeMsg>
             <Button type="accent" text={`LOGOUT`} />
