@@ -29,8 +29,8 @@ function Tag({ type, text, handler }) {
 
   if (type === "category") {
     switch (text) {
-      case "javascript":
-        bgColor = "#55efc4";
+      case "JavaScript":
+        bgColor = "#fd79a8";
         break;
       case "HTML/CSS":
         bgColor = "#81ecec";

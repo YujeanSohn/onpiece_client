@@ -6,6 +6,7 @@ import Home from "../pages/Home";
 import LoginPage from "../pages/LoginPage";
 import Detail from "../pages/Detail";
 import PostEditPage from "../pages/PostEditPage";
+import PostCreate from "../pages/PostCreate";
 
 const Router = () => {
   const [bodyHeight, setBodyHeight] = useState(0);
@@ -22,7 +23,8 @@ const Router = () => {
           <Route path="/" element={<Home minHeight={bodyHeight} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/post/:id" element={<Detail minHeight={bodyHeight} />} />
-          <Route path="/postedit" element={<PostEditPage />} />
+          <Route path="/post" element={<PostCreate />} />
+          <Route path="/post/edit/:id" element={<PostEditPage />} />
         </Routes>
       </BrowserRouter>
     </Layout>
