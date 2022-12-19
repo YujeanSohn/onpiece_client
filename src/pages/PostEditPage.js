@@ -7,6 +7,10 @@ import Tag from "../components/Tag";
 
 function PostEditPage() {
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [recruitPeriod, setRecruitPeriod] = useState();
+  const [studyDate, setstudyDate] = useState();
+
+  const [studyintro, setStudyintro] = useState();
 
   const filterDuplication = selectedOptions.filter((element, index) => {
     return selectedOptions.indexOf(element) === index;
@@ -28,8 +32,9 @@ function PostEditPage() {
           <Label>스터디 명</Label>
           <Content>
             <Recruits
-              placeholder="스터디 명을 입력해주세요"
+              placeholder="스터디 명을 입력해주세요 (2자 이상)"
               required
+              pattern=".{2,}"
             ></Recruits>
           </Content>
         </InputWrapper>
@@ -63,7 +68,7 @@ function PostEditPage() {
               </PostSelect>
             </Content>
           </InputWrapper>
-          <div>
+          <div style={{ margin: "30px" }}>
             {filterDuplication.map((select) => (
               <Tag
                 text={select}
@@ -88,38 +93,50 @@ function PostEditPage() {
         <InputWrapper>
           <Label>모집기간</Label>
           <Content>
-            <DateInput type="date" />
+            <DateInput
+              required
+              type="date"
+              min={new Date().toISOString().split("T")[0]}
+              onChange={(e) => setRecruitPeriod(e.target.value)}
+            />
             <>-</>
-            <DateInput type="date" />
+            <DateInput required type="date" min={recruitPeriod} />
           </Content>
         </InputWrapper>
         <InputWrapper>
           <Label>스터디 기간</Label>
           <Content>
-            <DateInput type="date" />
+            <DateInput
+              required
+              type="date"
+              min={new Date().toISOString().split("T")[0]}
+              onChange={(e) => setstudyDate(e.target.value)}
+            />
             <>-</>
-            <DateInput type="date" />
+            <DateInput required type="date" min={studyDate} />
           </Content>
         </InputWrapper>
         <InputWrapper>
           <Label>스터디 시간</Label>
           <Content>
-            <DateInput type="time" />
+            <DateInput required type="time" />
             <>-</>
-            <DateInput type="time" />
+            <DateInput required type="time" />
           </Content>
         </InputWrapper>
       </RegisterForm>
       <Label>스터디 안내</Label>
       <Content>
         <StudyDesc
-          placeholder="스터디 진행 방식, 학습 목표를 안내해주세요."
+          placeholder="스터디 진행 방식, 학습 목표를 안내해주세요.(20자 이상)"
           required
+          pattern=".{20,}"
+          onChange={(e) => setStudyintro(e.target.value)}
         ></StudyDesc>
       </Content>
       <ButtonBox>
         <ResetButton type="reset">초기화</ResetButton>
-        <Button text={`가입하기`} width={`180px`} />
+        <Button text={`탑승자 모집시작`} width={`180px`} />
       </ButtonBox>
     </Container>
   );
@@ -177,7 +194,7 @@ const Recruits = styled.input`
 
 const DateInput = styled.input`
   border: white;
-  width: 150px;
+  width: 178px;
   height: 50px;
   margin-right: 20px;
   margin-left: 20px;
@@ -189,7 +206,7 @@ const DateInput = styled.input`
 
 const PostSelect = styled.select`
   border: white;
-  width: 400px;
+  width: 405px;
   height: 50px;
   margin-right: 20px;
   margin-left: 20px;
@@ -199,16 +216,19 @@ const PostSelect = styled.select`
   text-indent: 10px;
 `;
 
-const StudyDesc = styled.input`
+const StudyDesc = styled.textarea`
   border: white;
-  width: 500px;
-  height: 120px;
+  width: 385px;
+  height: 100px;
   margin-right: 20px;
   margin-left: 20px;
   border-radius: 10px;
   box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.3);
   font-size: 15px;
   text-indent: 10px;
+  overflow: auto;
+  padding: 10px;
+  margin-left: 140px;
 `;
 
 const ButtonBox = styled.div`
