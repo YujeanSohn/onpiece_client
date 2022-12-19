@@ -32,10 +32,20 @@ function LoginPage() {
             <Logo>🛶 Onpiece</Logo>
             <LoginForm>
               <IDPW>
-                ID<IdInput placeholder="이메일을 입력해주세요"></IdInput>
+                ID
+                <IdInput
+                  type="email"
+                  placeholder="이메일을 입력해주세요"
+                  required
+                ></IdInput>
               </IDPW>
               <IDPW>
-                PW<PWInput placeholder="패스워드를 입력해 주세요"></PWInput>
+                PW
+                <PWInput
+                  type="password"
+                  placeholder="패스워드를 입력해 주세요"
+                  required
+                ></PWInput>
               </IDPW>
             </LoginForm>
             <ButtonBox>
@@ -55,27 +65,40 @@ function LoginPage() {
               <InputWrapper>
                 <Label>ID</Label>
                 <Content>
-                  <Register placeholder="아이디를 입력해 주세요"></Register>
+                  <Register
+                    type="email"
+                    placeholder="아이디를 입력해 주세요"
+                    required
+                  ></Register>
                   <Button text={`중복확인`} width={`94px`}></Button>
                 </Content>
               </InputWrapper>
               <InputWrapper>
                 <Label>닉네임</Label>
                 <Content>
-                  <Register placeholder="닉네임을 입력해 주세요"></Register>
+                  <Register
+                    placeholder="닉네임을 입력해 주세요"
+                    required
+                  ></Register>
                   <Button text={`중복확인`} width={`94px`}></Button>
                 </Content>
               </InputWrapper>
               <InputWrapper>
                 <Label>PW</Label>
                 <Content>
-                  <Register placeholder="패스워드를 입력해 주세요"></Register>
+                  <Register
+                    type="password"
+                    placeholder="패스워드를 입력해 주세요"
+                  ></Register>
                 </Content>
               </InputWrapper>
               <InputWrapper>
                 <Label>PW CHECK</Label>
                 <Content>
-                  <Register placeholder="패스워드를 한번 더 입력해 주세요"></Register>
+                  <Register
+                    type="password"
+                    placeholder="패스워드를 한번 더 입력해 주세요"
+                  ></Register>
                 </Content>
               </InputWrapper>
               <InputWrapper>
@@ -159,7 +182,7 @@ const Logo = styled.div`
     margin-left: 50px;
   }
 `;
-const LoginBox = styled.div``;
+const LoginBox = styled.form``;
 const LoginForm = styled.div`
   border-radius: 10px;
   background-color: #74b9ff;
@@ -211,7 +234,7 @@ const IDPW = styled.label`
   font-size: 20px;
   margin-left: 40px;
 `;
-const RegisterBox = styled.div``;
+const RegisterBox = styled.form``;
 
 const RegisterForm = styled.div`
   border-radius: 10px;
@@ -252,11 +275,5 @@ const Label = styled.div`
 const Content = styled.div`
   width: 85%;
 `;
-const PwCheck = styled.div`
-  flex-direction: column;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  margin-right: 70px;
-`;
+
 export default LoginPage;
