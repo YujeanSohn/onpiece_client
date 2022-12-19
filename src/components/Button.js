@@ -2,7 +2,20 @@ import React from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.button`
-  padding: 10px 20px;
+  padding: ${(props) => {
+    switch (props.size) {
+      case "small":
+        return `5px 10px`;
+      case "midium":
+        return `10px 20px`;
+      case "large":
+        return `10px 50px`;
+      case "x-large":
+        return ``;
+      default:
+        return `10px 20px`;
+    }
+  }};
   width: ${(props) => props.width};
   border: none;
   border-radius: 5px;
@@ -19,14 +32,16 @@ const Wrapper = styled.button`
     }
   }};
   color: ${(props) => props.color};
+  :hover {
+    cursor: pointer;
+  }
 `;
 
-function Button({ width, type, text = "button", handler }) {
+const Button = ({ size, width, type, text = "button", handler }) => {
   return (
-    <Wrapper onClick={handler} width={width} type={type}>
+    <Wrapper size={size} width={width} type={type} onClick={handler}>
       {text}
     </Wrapper>
   );
-}
-
+};
 export default Button;
