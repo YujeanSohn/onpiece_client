@@ -7,7 +7,7 @@ import dateTimeParser from "../tools/dateTimeParser";
 import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
-  width: 20%;
+  width: ${(props) => props.width};
   padding: 2%;
   margin-top: 20px;
   float: left;
@@ -52,10 +52,10 @@ const Info = styled.div`
   width: 68%;
 `;
 
-function Post({ post }) {
+function Post({ width = 20, post }) {
   const navigate = useNavigate();
   return (
-    <Wrapper onClick={() => navigate(`/post/${post.id}`)}>
+    <Wrapper  width={`${width}%`} onClick={() => navigate(`/post/${post.id}`)}>
       <Title>{post.title}</Title>
       <SubTitle>👨‍✈{post.nickname} 선장님이 이끄는 스터디</SubTitle>
       <TagBox>
