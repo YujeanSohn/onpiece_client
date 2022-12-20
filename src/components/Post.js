@@ -7,7 +7,7 @@ import dateTimeParser from "../tools/dateTimeParser";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 
-function Post({ width = 18, post, isApplied = false }) {
+function Post({ width = 18, post, isApplied = false, isPublisher = false }) {
   const navigate = useNavigate();
 
   return (
@@ -54,7 +54,7 @@ function Post({ width = 18, post, isApplied = false }) {
           <Button
             type="main"
             text="탑승하기"
-            disabled={post.headCount === post.applicants.length}
+            disabled={post.headCount === post.applicants.length || isPublisher}
           />
         )}
         <Button
