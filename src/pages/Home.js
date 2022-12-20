@@ -1,11 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 import Button from "../components/Button";
 import Post from "../components/Post";
 
+import { __getAppliedStudies } from "../redux/modules/UserSlice";
+
 function Home({ minHeight }) {
+  const userId = useSelector((store) => store.user.id);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(__getAppliedStudies(userId));
+  }, []);
+  const applied = useSelector((store) => store.user.applied);
+
   const posts = useSelector((store) => store.posts.posts);
   const [lineHeight, setLineHeight] = useState(0);
   const ref = useRef();
@@ -29,7 +38,17 @@ function Home({ minHeight }) {
               🚣‍♂ 새로운 스터디를 모집해보세요!
             </InfoBox>
           ) : (
-            posts.map((post) => <Post key={post.postId} post={post} />)
+            posts.map((post) => {
+              let isApplied = false;
+              for (let i = 0; i < applied.length; i++) {
+                if (applied[i].postId === post.postId) {
+                  isApplied = true;
+                }
+              }
+              return (
+                <Post key={post.postId} post={post} isApplied={isApplied} />
+              );
+            })
           )}
         </PostList>
       </Content>

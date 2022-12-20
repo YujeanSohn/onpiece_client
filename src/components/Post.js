@@ -5,11 +5,13 @@ import Tag from "./Tag";
 import Progressbar from "./Progressbar";
 import dateTimeParser from "../tools/dateTimeParser";
 import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 
-function Post({ width = 18, post }) {
+function Post({ width = 18, post, isApplied = false }) {
   const navigate = useNavigate();
+
   return (
-    <Wrapper width={`${width}%`} onClick={() => navigate(`/post/${post.id}`)}>
+    <Wrapper width={`${width}%`}>
       <Title>{post.title}</Title>
       <SubTitle>👨‍✈{post.nickname} 선장님이 이끄는 스터디</SubTitle>
       <TagBox>
@@ -45,6 +47,21 @@ function Post({ width = 18, post }) {
           ></Progressbar>
         </Info>
       </InfoBox>
+      <BtnWrapper>
+        {isApplied ? (
+          <Button type="cancel" text="하차하기" />
+        ) : (
+          <Button
+            type="main"
+            text="탑승하기"
+            disabled={post.headCount === post.applicants.length}
+          />
+        )}
+        <Button
+          text="구경하기"
+          handler={() => navigate(`/post/${post.postId}`)}
+        />
+      </BtnWrapper>
     </Wrapper>
   );
 }
@@ -60,9 +77,6 @@ const Wrapper = styled.div`
   border: 2px solid ${(props) => props.theme.subColor};
   border-radius: 10px;
   background-color: white;
-  :hover {
-    cursor: pointer;
-  }
 `;
 
 const Title = styled.h2`
@@ -93,6 +107,14 @@ const Label = styled.span`
 const Info = styled.div`
   font-size: 14px;
   width: 68%;
+`;
+
+const BtnWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export default Post;
