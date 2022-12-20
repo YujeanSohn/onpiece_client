@@ -14,6 +14,7 @@ const mainTheme = {
   accentColor: "tomato",
   basicBtnColor: "#ffeaa7",
   cancelBtnColor: "#e17055",
+  disabledBtnColor: "#cccccc",
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

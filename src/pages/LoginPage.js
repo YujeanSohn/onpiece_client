@@ -50,11 +50,12 @@ function LoginPage() {
             </LoginForm>
             <ButtonBox>
               <Button
-                text={`회원가입`}
-                width={`180px`}
+                type="default"
+                text="회원가입"
+                width="180px"
                 handler={toggle}
               ></Button>
-              <Button type={`login`} text={`로그인`} width={`180px`} />
+              <Button type="main" text="로그인" width="180px" />
             </ButtonBox>
           </form>
         )}
@@ -70,7 +71,7 @@ function LoginPage() {
                     placeholder="아이디를 입력해 주세요"
                     required
                   ></Register>
-                  <Button text={`중복확인`} width={`94px`}></Button>
+                  <Button type="default" text="중복확인" width="94px"></Button>
                 </Content>
               </InputWrapper>
               <InputWrapper>
@@ -80,7 +81,7 @@ function LoginPage() {
                     placeholder="닉네임을 입력해 주세요"
                     required
                   ></Register>
-                  <Button text={`중복확인`} width={`94px`}></Button>
+                  <Button type="default" text="중복확인" width="94px"></Button>
                 </Content>
               </InputWrapper>
               <InputWrapper>
@@ -109,8 +110,13 @@ function LoginPage() {
               </InputWrapper>
             </RegisterForm>
             <ButtonBox>
-              <Button text={`뒤로가기`} width={`180px`} handler={toggle} />
-              <Button type={`login`} text={`가입하기`} width={`180px`} />
+              <Button
+                type="default"
+                text="뒤로가기"
+                width="180px"
+                handler={toggle}
+              />
+              <Button type="main" text="가입하기" width="180px" />
             </ButtonBox>
           </form>
         )}

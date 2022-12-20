@@ -1,6 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 
+const Button = ({ size, width, type, text = "button", handler, disabled }) => {
+  return (
+    <Wrapper
+      size={size}
+      width={width}
+      type={disabled ? "disabled" : type}
+      onClick={handler}
+      disabled={disabled}
+    >
+      {text}
+    </Wrapper>
+  );
+};
+
 const Wrapper = styled.button`
   padding: ${(props) => {
     switch (props.size) {
@@ -8,10 +22,6 @@ const Wrapper = styled.button`
         return `5px 10px`;
       case "midium":
         return `10px 20px`;
-      case "large":
-        return `10px 50px`;
-      case "x-large":
-        return ``;
       default:
         return `10px 20px`;
     }
@@ -25,23 +35,19 @@ const Wrapper = styled.button`
         return props.theme.accentColor;
       case "cancel":
         return props.theme.cancelBtnColor;
-      case "login":
+      case "main":
         return props.theme.mainColor;
+      case "default":
+        return props.theme.basicBtnColor;
+      case "disabled":
+        return props.theme.disabledBtnColor;
       default:
         return props.theme.basicBtnColor;
     }
   }};
-  color: ${(props) => props.color};
   :hover {
     cursor: pointer;
   }
 `;
 
-const Button = ({ size, width, type, text = "button", handler }) => {
-  return (
-    <Wrapper size={size} width={width} type={type} onClick={handler}>
-      {text}
-    </Wrapper>
-  );
-};
 export default Button;
