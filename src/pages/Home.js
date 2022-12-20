@@ -45,8 +45,14 @@ function Home({ minHeight }) {
                   isApplied = true;
                 }
               }
+
               return (
-                <Post key={post.postId} post={post} isApplied={isApplied} />
+                <Post
+                  key={post.postId}
+                  post={post}
+                  isApplied={isApplied}
+                  isPublisher={userId === post.userId}
+                />
               );
             })
           )}
