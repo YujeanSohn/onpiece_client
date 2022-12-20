@@ -10,6 +10,7 @@ import CommentList from "../components/CommentList";
 
 function Detail({ minHeight }) {
   const post = useSelector((store) => store.posts.post);
+  const userId = useSelector((store) => store.user.id);
 
   const levelMsg = () => {
     switch (post.level) {
@@ -42,13 +43,21 @@ function Detail({ minHeight }) {
     <Wrapper minHeight={`${minHeight}px`}>
       <Content>
         <ContentHeader>
-          <Title>스터디 구경하기</Title>
+          <PageTitle>스터디 구경하기</PageTitle>
         </ContentHeader>
         <TopContent>
-          <ContentTitleWrapper>
-            <ContentTitle>{post.title}</ContentTitle>
-            <span>{`${dateTimeParser(post.recruitmentEndDay)} 까지 모집`}</span>
-          </ContentTitleWrapper>
+          <TitleWrapper>
+            <TextWrapper>
+              <ContentTitle>{post.title}</ContentTitle>
+              <span>{`${dateTimeParser(
+                post.recruitmentEndDay
+              )} 까지 모집`}</span>
+            </TextWrapper>
+            <BtnWrapper show={post.userId === userId}>
+              <Button type="default" text="수정하기" />
+              <Button type="accent" text="삭제하기" />
+            </BtnWrapper>
+          </TitleWrapper>
           <ProgressInfoWrapper>
             <ProgressbarWrapper>
               <Progressbar
@@ -62,7 +71,7 @@ function Detail({ minHeight }) {
                 )}
               </ProgressInfoText>
             </ProgressbarWrapper>
-            <Button text="탑승하기" />
+            <Button text="탑승하기" disabled={post.userId === userId} />
           </ProgressInfoWrapper>
         </TopContent>
         <TagBoxWrapper>
@@ -110,7 +119,7 @@ function Detail({ minHeight }) {
             </InfoBoxWrapper>
           </RightContent>
         </BottomContent>
-        <CommentList postId={post.id} />
+        <CommentList postId={post.postId} />
       </Content>
     </Wrapper>
   );
@@ -132,7 +141,7 @@ const ContentHeader = styled.div`
   align-items: center;
 `;
 
-const Title = styled.h1`
+const PageTitle = styled.h1`
   font-size: 20px;
   font-weight: 600;
 `;
@@ -141,9 +150,15 @@ const TopContent = styled.div`
   width: 100%;
 `;
 
-const ContentTitleWrapper = styled.div`
+const TitleWrapper = styled.div`
   width: 100%;
   padding: 20px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const TextWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: start;
@@ -154,6 +169,12 @@ const ContentTitleWrapper = styled.div`
 
 const ContentTitle = styled.h2`
   font-size: 40px;
+`;
+
+const BtnWrapper = styled.div`
+  display: ${(props) => (props.show ? "flex" : "none")};
+  flex-direction: row;
+  gap: 20px;
 `;
 
 const ProgressInfoWrapper = styled.div`
