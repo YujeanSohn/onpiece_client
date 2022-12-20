@@ -5,44 +5,6 @@ import styled from "styled-components";
 import Button from "../components/Button";
 import Post from "../components/Post";
 
-const Wrapper = styled.div`
-  width: 100%;
-  min-height: ${(props) => props.minHeight};
-`;
-
-const Content = styled.div`
-  padding: 40px;
-`;
-
-const ContentHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  font-size: 20px;
-  font-weight: 600;
-`;
-
-const PostList = styled.div`
-  padding: 20px 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-`;
-
-const InfoBox = styled.div`
-  width: 100%;
-  height: 100%;
-  line-height: ${(props) => props.lineHeight};
-  text-align: center;
-  color: white;
-  font-weight: 600;
-`;
-
 function Home({ minHeight }) {
   const posts = useSelector((store) => store.posts.posts);
   const [lineHeight, setLineHeight] = useState(0);
@@ -74,5 +36,42 @@ function Home({ minHeight }) {
     </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  width: 100%;
+  min-height: ${(props) => props.minHeight};
+`;
+
+const Content = styled.div`
+  padding: 40px;
+`;
+
+const ContentHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Title = styled.h1`
+  font-size: 20px;
+  font-weight: 600;
+`;
+
+const PostList = styled.div`
+  padding: 20px 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+`;
+
+const InfoBox = styled.div`
+  width: 100%;
+  height: 100%;
+  line-height: ${(props) => props.lineHeight};
+  text-align: center;
+  color: white;
+  font-weight: 600;
+`;
 
 export default Home;

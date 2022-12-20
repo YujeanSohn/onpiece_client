@@ -6,10 +6,53 @@ import Progressbar from "./Progressbar";
 import dateTimeParser from "../tools/dateTimeParser";
 import { useNavigate } from "react-router-dom";
 
+function Post({ width = 18, post }) {
+  const navigate = useNavigate();
+  return (
+    <Wrapper width={`${width}%`} onClick={() => navigate(`/post/${post.id}`)}>
+      <Title>{post.title}</Title>
+      <SubTitle>👨‍✈{post.nickname} 선장님이 이끄는 스터디</SubTitle>
+      <TagBox>
+        <Tag type="level" text={post.level}></Tag>
+      </TagBox>
+      <TagBox>
+        {post.category.map((v) => (
+          <Tag key={v} type="category" text={v}></Tag>
+        ))}
+      </TagBox>
+      <InfoBox>
+        <Label>모집기간</Label>
+        <Info>{`${dateTimeParser(post.recruitmentEndDay)} 까지`}</Info>
+      </InfoBox>
+      <InfoBox>
+        <Label>스터디기간</Label>
+        <Info>
+          {post.startDay} - {post.endDay}
+        </Info>
+      </InfoBox>
+      <InfoBox>
+        <Label>스터디시간</Label>
+        <Info>
+          {post.startTime} - {post.endTime}
+        </Info>
+      </InfoBox>
+      <InfoBox>
+        <Label>모집인원</Label>
+        <Info>
+          <Progressbar
+            denominator={post.headCount}
+            numerator={post.applicants.length}
+          ></Progressbar>
+        </Info>
+      </InfoBox>
+    </Wrapper>
+  );
+}
+
 const Wrapper = styled.div`
   width: ${(props) => props.width};
   padding: 2%;
-  margin-top: 20px;
+  margin: 20px 1.3%;
   float: left;
   display: flex;
   flex-direction: column;
@@ -51,48 +94,5 @@ const Info = styled.div`
   font-size: 14px;
   width: 68%;
 `;
-
-function Post({ width = 20, post }) {
-  const navigate = useNavigate();
-  return (
-    <Wrapper  width={`${width}%`} onClick={() => navigate(`/post/${post.id}`)}>
-      <Title>{post.title}</Title>
-      <SubTitle>👨‍✈{post.nickname} 선장님이 이끄는 스터디</SubTitle>
-      <TagBox>
-        <Tag type="level" text={post.level}></Tag>
-      </TagBox>
-      <TagBox>
-        {post.category.map((v) => (
-          <Tag key={v} type="category" text={v}></Tag>
-        ))}
-      </TagBox>
-      <InfoBox>
-        <Label>모집기간</Label>
-        <Info>{`${dateTimeParser(post.recruitmentEndDay)} 까지`}</Info>
-      </InfoBox>
-      <InfoBox>
-        <Label>스터디기간</Label>
-        <Info>
-          {post.startDay} - {post.endDay}
-        </Info>
-      </InfoBox>
-      <InfoBox>
-        <Label>스터디시간</Label>
-        <Info>
-          {post.startTime} - {post.endTime}
-        </Info>
-      </InfoBox>
-      <InfoBox>
-        <Label>모집인원</Label>
-        <Info>
-          <Progressbar
-            denominator={post.headCount}
-            numerator={post.applicants.length}
-          ></Progressbar>
-        </Info>
-      </InfoBox>
-    </Wrapper>
-  );
-}
 
 export default Post;
