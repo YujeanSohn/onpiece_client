@@ -70,6 +70,7 @@ function Tag({ type, text, isRemovable, handler }) {
 
 const Wrapper = styled.div`
   float: left;
+  margin: 0 10px 10px 0;
   padding: 10px;
   border-radius: 15px;
   background-color: ${(props) => props.bgColor};
