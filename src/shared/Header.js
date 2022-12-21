@@ -1,13 +1,20 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 
 import Button from "../components/Button";
-import { logout } from "../redux/modules/UserSlice";
+import { logout, __getUserInfo } from "../redux/modules/UserSlice";
 
-const Header = React.forwardRef(({ show }, ref) => {
+const Header = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
+  const userInfo = useSelector((store) => store.user.userInfo);
+  const userId = !userInfo?.userId
+    ? localStorage.getItem("userId")
+    : userInfo.userId;
+  useEffect(() => {
+    if (!userInfo?.nickname) dispatch(__getUserInfo(userId));
+  }, []);
   const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logout());
@@ -15,10 +22,12 @@ const Header = React.forwardRef(({ show }, ref) => {
   };
 
   return (
-    <Wrapper ref={ref} show={show}>
+    <Wrapper ref={ref}>
       <Logo onClick={() => navigate("/")}>🛶 Onpiece</Logo>
       <div>
-        <WelcomeMsg>유진님 환영합니다.</WelcomeMsg>
+        <WelcomeMsg>
+          <Link to={`/user/${userId}`}>{userInfo?.nickname}</Link>님 환영합니다.
+        </WelcomeMsg>
         <Button type="accent" text={`LOGOUT`} handler={handleLogout} />
       </div>
     </Wrapper>
@@ -27,7 +36,7 @@ const Header = React.forwardRef(({ show }, ref) => {
 
 const Wrapper = styled.div`
   padding: 40px;
-  display: ${(props) => (props.show ? "flex" : "none")};
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

@@ -1,5 +1,6 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import Button from "../components/Button";
@@ -8,9 +9,28 @@ import Tag from "../components/Tag";
 import dateTimeParser from "../tools/dateTimeParser";
 import CommentList from "../components/CommentList";
 
+import { __deletePost, __getPost } from "../redux/modules/PostsSlice";
+
 function Detail({ minHeight }) {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleGetPost = () => {
+    try {
+      dispatch(__getPost(id));
+    } catch (e) {
+      navigate("/");
+    }
+  };
+  useEffect(() => {
+    handleGetPost();
+  }, []);
+  const isLoading = useSelector((store) => store.posts.isLoading);
   const post = useSelector((store) => store.posts.post);
-  const userId = useSelector((store) => store.user.id);
+  const userInfo = useSelector((store) => store.user.userInfo);
+  const userId = !userInfo?.userId
+    ? localStorage.getItem("userId")
+    : userInfo.userId;
 
   const levelMsg = () => {
     switch (post.level) {
@@ -39,87 +59,110 @@ function Detail({ minHeight }) {
     else return `잘못된 percentage 정보입니다.`;
   };
 
+  const handleEdit = () => {
+    navigate(`/post/edit/${id}`);
+  };
+
+  const handleDelete = () => {
+    dispatch(__deletePost(id));
+    navigate(`/`);
+  };
+
   return (
     <Wrapper minHeight={`${minHeight}px`}>
       <Content>
         <ContentHeader>
           <PageTitle>스터디 구경하기</PageTitle>
         </ContentHeader>
-        <TopContent>
-          <TitleWrapper>
-            <TextWrapper>
-              <ContentTitle>{post.title}</ContentTitle>
-              <span>{`${dateTimeParser(
-                post.recruitmentEndDay
-              )} 까지 모집`}</span>
-            </TextWrapper>
-            <BtnWrapper show={post.userId === userId}>
-              <Button type="default" text="수정하기" />
-              <Button type="accent" text="삭제하기" />
-            </BtnWrapper>
-          </TitleWrapper>
-          <ProgressInfoWrapper>
-            <ProgressbarWrapper>
-              <Progressbar
-                width={50}
-                denominator={post.headCount}
-                numerator={post.applicants.length}
-              ></Progressbar>
-              <ProgressInfoText>
-                {ProgressMsg(
-                  Math.trunc((post.applicants.length / post.headCount) * 100)
-                )}
-              </ProgressInfoText>
-            </ProgressbarWrapper>
-            <Button text="탑승하기" disabled={post.userId === userId} />
-          </ProgressInfoWrapper>
-        </TopContent>
-        <TagBoxWrapper>
-          <TagBox>
-            <Tag type="level" text={post.level} />
-            <div>{levelMsg(post.level)}</div>
-          </TagBox>
-          <TagBox>
-            {post.category.map((v) => (
-              <Tag key={v} type="category" text={v} />
-            ))}
-          </TagBox>
-        </TagBoxWrapper>
-        <Label>스터디 안내</Label>
-        <BottomContent>
-          <LeftContent>
-            <TextBoxWrapper>
-              <TextBox>{post.content}</TextBox>
-            </TextBoxWrapper>
-          </LeftContent>
-          <RightContent>
-            <DescriptionBox>
-              <Label>{`👨‍✈ ${post.nickname} 선장님의 자기 소개`}</Label>
-              <div>{post.userDescription}</div>
-              <Label>📜 {`${post.nickname} 선장님이 이끌었던 스터디`}</Label>
-              <StudyTitleBoxWrapper>
-                {post.exPosts.map((v) => (
-                  <StudyTitleBox key={v}>{v}</StudyTitleBox>
+        {isLoading ? (
+          <LoadingMsg>데이터를 불러오는 중입니다.</LoadingMsg>
+        ) : (
+          <>
+            <TopContent>
+              <TitleWrapper>
+                <TextWrapper>
+                  <ContentTitle>{post.title}</ContentTitle>
+                  <span>{`${dateTimeParser(
+                    post.recruitmentEndDay
+                  )} 까지 모집`}</span>
+                </TextWrapper>
+                <BtnWrapper show={post.userId === userId}>
+                  <Button type="default" text="수정하기" handler={handleEdit} />
+                  <Button
+                    type="accent"
+                    text="삭제하기"
+                    handler={handleDelete}
+                  />
+                </BtnWrapper>
+              </TitleWrapper>
+              <ProgressInfoWrapper>
+                <ProgressbarWrapper>
+                  <Progressbar
+                    width={50}
+                    denominator={post.headCount}
+                    numerator={post.applicants.length}
+                  ></Progressbar>
+                  <ProgressInfoText>
+                    {ProgressMsg(
+                      Math.trunc(
+                        (post.applicants.length / post.headCount) * 100
+                      )
+                    )}
+                  </ProgressInfoText>
+                </ProgressbarWrapper>
+                <Button text="탑승하기" disabled={post.userId === userId} />
+              </ProgressInfoWrapper>
+            </TopContent>
+            <TagBoxWrapper>
+              <TagBox>
+                <Tag type="level" text={post.level} />
+                <div>{levelMsg(post.level)}</div>
+              </TagBox>
+              <TagBox>
+                {post.category.map((v) => (
+                  <Tag key={v} type="category" text={v} />
                 ))}
-              </StudyTitleBoxWrapper>
-            </DescriptionBox>
-            <InfoBoxWrapper>
-              <InfoBox>
-                <InfoLabel>스터디기간</InfoLabel>
-                <Info>
-                  {post.startDay} - {post.endDay}
-                </Info>
-              </InfoBox>
-              <InfoBox>
-                <InfoLabel>스터디시간</InfoLabel>
-                <Info>
-                  {post.startTime} - {post.endTime}
-                </Info>
-              </InfoBox>
-            </InfoBoxWrapper>
-          </RightContent>
-        </BottomContent>
-        <CommentList postId={post.postId} />
+              </TagBox>
+            </TagBoxWrapper>
+            <Label>스터디 안내</Label>
+            <BottomContent>
+              <LeftContent>
+                <TextBoxWrapper>
+                  <TextBox>{post.content}</TextBox>
+                </TextBoxWrapper>
+              </LeftContent>
+              <RightContent>
+                <DescriptionBox>
+                  <Label>{`👨‍✈ ${post.nickname} 선장님의 자기 소개`}</Label>
+                  <div>{post.userDescription}</div>
+                  <Label>
+                    📜 {`${post.nickname} 선장님이 이끌었던 스터디`}
+                  </Label>
+                  <StudyTitleBoxWrapper>
+                    {post.exPosts.map((v) => (
+                      <StudyTitleBox key={v}>{v}</StudyTitleBox>
+                    ))}
+                  </StudyTitleBoxWrapper>
+                </DescriptionBox>
+                <InfoBoxWrapper>
+                  <InfoBox>
+                    <InfoLabel>스터디기간</InfoLabel>
+                    <Info>
+                      {post.startDay} - {post.endDay}
+                    </Info>
+                  </InfoBox>
+                  <InfoBox>
+                    <InfoLabel>스터디시간</InfoLabel>
+                    <Info>
+                      {post.startTime} - {post.endTime}
+                    </Info>
+                  </InfoBox>
+                </InfoBoxWrapper>
+              </RightContent>
+            </BottomContent>
+            <CommentList postId={id} />
+          </>
+        )}
       </Content>
     </Wrapper>
   );
@@ -145,6 +188,15 @@ const ContentHeader = styled.div`
 const PageTitle = styled.h1`
   font-size: 20px;
   font-weight: 600;
+`;
+
+const LoadingMsg = styled.div`
+  width: 100%;
+  height: 50vh;
+  line-height: 50vh;
+  text-align: center;
+  color: white;
+  font-weight: 800;
 `;
 
 const TopContent = styled.div`

@@ -10,8 +10,12 @@ import { __getPosts } from "../redux/modules/PostsSlice";
 import { __getAppliedStudies } from "../redux/modules/UserSlice";
 
 function Home({ minHeight }) {
-  const userId = useSelector((store) => store.user.id);
   const dispatch = useDispatch();
+  const userInfo = useSelector((store) => store.user.userInfo);
+  const userId = !userInfo?.userId
+    ? localStorage.getItem("userId")
+    : userInfo.userId;
+
   useEffect(() => {
     dispatch(__getPosts());
     dispatch(__getAppliedStudies(userId));

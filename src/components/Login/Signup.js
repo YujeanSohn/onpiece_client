@@ -11,6 +11,7 @@ import {
   __nicknameCheck,
   __signUp,
 } from "../../redux/modules/UserSlice";
+import { useNavigate } from "react-router-dom";
 
 function Signup({ handleChangeForm }) {
   const dispatch = useDispatch();
@@ -69,6 +70,7 @@ function Signup({ handleChangeForm }) {
     onChangePasswordCheck(e);
   };
 
+  const navigate = useNavigate();
   const handleSubmit = () => {
     let data = {
       email: email,
@@ -79,6 +81,7 @@ function Signup({ handleChangeForm }) {
     };
 
     dispatch(__signUp(data));
+    navigate("/login");
   };
   return (
     <Wrapper>

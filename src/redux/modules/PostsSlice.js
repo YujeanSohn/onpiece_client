@@ -26,14 +26,38 @@ export const __getPosts = createAsyncThunk(
   }
 );
 
+export const __getPost = createAsyncThunk(
+  "getPost",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/posts/${payload}`);
+      return thunkAPI.fulfillWithValue(data);
+    } catch (e) {
+      thunkAPI.rejectWithValue(e);
+    }
+  }
+);
+
 export const __addPost = createAsyncThunk(
   "addPost",
   async (payload, thunkAPI) => {
     try {
-      await client.post(`/posts`, payload);
-      return thunkAPI.fulfillWithValue(payload);
+      const { data } = await client.post(`/posts`, payload);
+      return thunkAPI.fulfillWithValue(data);
     } catch (e) {
       alert(`addPostError: ${e}`);
+    }
+  }
+);
+
+export const __deletePost = createAsyncThunk(
+  "deletePost",
+  async (payload, thunkAPI) => {
+    try {
+      await client.delete(`/posts/${payload.postId}`);
+      return thunkAPI.fulfillWithValue(payload);
+    } catch (e) {
+      alert(`deletePostError: ${e}`);
     }
   }
 );
@@ -104,12 +128,32 @@ const postsSlice = createSlice({
       .addCase(__getPosts.rejected, (state, action) => {
         alert(action.payload);
       })
+      .addCase(__getPost.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getPost.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.post = action.payload;
+      })
+      .addCase(__getPost.rejected, (state, action) => {
+        alert(action.payload);
+      })
       .addCase(__addPost.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(__addPost.fulfilled, (state, action) => {
         state.isLoading = false;
         state.posts = [...state.posts, action.payload];
+      })
+      .addCase(__deletePost.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(__deletePost.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const posts = [...state.posts];
+        state.posts = posts.filter(
+          (post) => post.postId !== action.payload.postId
+        );
       });
   },
 });
