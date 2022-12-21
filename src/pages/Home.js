@@ -6,12 +6,14 @@ import styled from "styled-components";
 import Button from "../components/Button";
 import Post from "../components/Post";
 
+import { __getPosts } from "../redux/modules/PostsSlice";
 import { __getAppliedStudies } from "../redux/modules/UserSlice";
 
 function Home({ minHeight }) {
   const userId = useSelector((store) => store.user.id);
   const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(__getPosts());
     dispatch(__getAppliedStudies(userId));
   }, []);
   const applied = useSelector((store) => store.user.applied);
@@ -71,6 +73,7 @@ function Home({ minHeight }) {
 const Wrapper = styled.div`
   width: 100%;
   min-height: ${(props) => props.minHeight};
+  background-color: ${(props) => props.theme.mainColor};
 `;
 
 const Content = styled.div`
