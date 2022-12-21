@@ -1,16 +1,107 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import styled from "styled-components";
 import Button from "../components/Button";
 import Post from "../components/Post";
-import { useSelector } from "react-redux";
+import {
+  __signIn,
+  __signUp,
+  __emailCheck,
+  __nicknameCheck,
+} from "../redux/modules/UserSlice";
 
 function LoginPage() {
   const posts = useSelector((store) => store.posts.posts);
+  const checkEmail = useSelector((store) => store.user.emailCheck);
+  const checNickname = useSelector((store) => store.user.nicknameCheck);
+  const isLogin = useSelector((store) => store.user.isLogin);
+
+  const dispatch = useDispatch();
+
+  const [Email, setEmail] = useState("");
+  const [Name, setName] = useState("");
+  const [Password, setPassword] = useState("");
+  const [ConfirmPassword, setConfirmPassword] = useState("");
+  const [UserDesc, setUserDesc] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setloginPassword] = useState("");
+
+  const onEmailHandler = (event) => {
+    setEmail(event.currentTarget.value);
+  };
+  const onNameHandler = (event) => {
+    setName(event.currentTarget.value);
+  };
+  const onPasswordHandler = (event) => {
+    setPassword(event.currentTarget.value);
+  };
+  const onConfirmPasswordHandler = (event) => {
+    setConfirmPassword(event.currentTarget.value);
+  };
+  const onUserDescHandler = (event) => {
+    setUserDesc(event.currentTarget.value);
+  };
+  const LoginEmailHandler = (event) => {
+    setLoginEmail(event.currentTarget.value);
+  };
+  const LoginPasswordHandler = (event) => {
+    setloginPassword(event.currentTarget.value);
+  };
+
+  const onLoginHandler = (event) => {
+    // 버튼만 누르면 리로드 되는것을 막아줌
+    event.preventDefault();
+
+    let login = {
+      email: loginEmail,
+      password: loginPassword,
+    };
+
+    dispatch(__signIn(login));
+  };
+
+  const emailCheck = () => {
+    if (Email === "") {
+      return;
+    } else dispatch(__emailCheck({ Email }));
+  };
+
+  const nicknameCheck = () => {
+    if (Name === "") {
+      return;
+    } else dispatch(__nicknameCheck({ Name }));
+  };
+
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+
+    if (Password !== ConfirmPassword) {
+      return alert("비밀번호와 비밀번호 확인이 같지 않습니다.");
+    }
+
+    let body = {
+      email: Email,
+      nickname: Name,
+      password: Password,
+      confirm: ConfirmPassword,
+      description: UserDesc,
+    };
+
+    dispatch(__signUp(body));
+  };
 
   const [show, setShow] = useState(true);
+
   const toggle = () => {
     setShow(!show);
   };
+
+  useEffect(() => {
+    if (isLogin === true) {
+      window.location.href = "/";
+    }
+  });
 
   return (
     <Container>
@@ -28,7 +119,7 @@ function LoginPage() {
       </Left>
       <Right>
         {show && (
-          <form>
+          <form onSubmit={onLoginHandler}>
             <Logo>🛶 Onpiece</Logo>
             <LoginForm>
               <IDPW>
@@ -37,6 +128,7 @@ function LoginPage() {
                   type="email"
                   placeholder="이메일을 입력해주세요"
                   required
+                  onChange={LoginEmailHandler}
                 ></IdInput>
               </IDPW>
               <IDPW>
@@ -45,6 +137,7 @@ function LoginPage() {
                   type="password"
                   placeholder="패스워드를 입력해 주세요"
                   required
+                  onChange={LoginPasswordHandler}
                 ></PWInput>
               </IDPW>
             </LoginForm>
@@ -55,23 +148,32 @@ function LoginPage() {
                 width="180px"
                 handler={toggle}
               ></Button>
-              <Button type="main" text="로그인" width="180px" />
+              <Button type="login" text="로그인" width="180px" />
             </ButtonBox>
           </form>
         )}
         {!show && (
-          <form>
+          <form onSubmit={onSubmitHandler}>
             <Logo>🛶 Onpiece</Logo>
             <RegisterForm>
               <InputWrapper>
-                <Label>ID</Label>
+                <Label>Email</Label>
                 <Content>
                   <Register
                     type="email"
-                    placeholder="아이디를 입력해 주세요"
+                    placeholder="이메일을 입력해 주세요"
                     required
+                    onChange={onEmailHandler}
                   ></Register>
-                  <Button type="default" text="중복확인" width="94px"></Button>
+                  <Button
+                    type="default"
+                    text="중복확인"
+                    width="94px"
+                    handler={emailCheck}
+                  ></Button>
+                  <EmailCheck show={checkEmail}>
+                    중복되는 아이디입니다
+                  </EmailCheck>
                 </Content>
               </InputWrapper>
               <InputWrapper>
@@ -80,8 +182,17 @@ function LoginPage() {
                   <Register
                     placeholder="닉네임을 입력해 주세요"
                     required
+                    onChange={onNameHandler}
                   ></Register>
-                  <Button type="default" text="중복확인" width="94px"></Button>
+                  <Button
+                    type="default"
+                    text="중복확인"
+                    width="94px"
+                    handler={nicknameCheck}
+                  ></Button>
+                  <CheckNickname show={checNickname}>
+                    중복되는 닉네임입니다
+                  </CheckNickname>
                 </Content>
               </InputWrapper>
               <InputWrapper>
@@ -90,6 +201,8 @@ function LoginPage() {
                   <Register
                     type="password"
                     placeholder="패스워드를 입력해 주세요"
+                    onChange={onPasswordHandler}
+                    required
                   ></Register>
                 </Content>
               </InputWrapper>
@@ -99,13 +212,18 @@ function LoginPage() {
                   <Register
                     type="password"
                     placeholder="패스워드를 한번 더 입력해 주세요"
+                    onChange={onConfirmPasswordHandler}
+                    required
                   ></Register>
                 </Content>
               </InputWrapper>
               <InputWrapper>
                 <Label>소개글</Label>
                 <Content>
-                  <Register placeholder="소개글을 입력해 주세요(선택)"></Register>
+                  <Register
+                    placeholder="소개글을 입력해 주세요(선택)"
+                    onChange={onUserDescHandler}
+                  ></Register>
                 </Content>
               </InputWrapper>
             </RegisterForm>
@@ -116,7 +234,7 @@ function LoginPage() {
                 width="180px"
                 handler={toggle}
               />
-              <Button type="main" text="가입하기" width="180px" />
+              <Button type="main" text="가입하기" width="180px"></Button>
             </ButtonBox>
           </form>
         )}
@@ -291,6 +409,23 @@ const Label = styled.div`
 
 const Content = styled.div`
   width: 85%;
+`;
+
+const EmailCheck = styled.p`
+  position: absolute;
+  margin-top: 10px;
+  margin-left: 10px;
+  color: red;
+  font-weight: bold;
+  display: ${(props) => (props.show ? "" : "none")};
+`;
+const CheckNickname = styled.p`
+  position: absolute;
+  margin-top: 10px;
+  margin-left: 10px;
+  color: red;
+  font-weight: bold;
+  display: ${(props) => (props.show ? "" : "none")};
 `;
 
 export default LoginPage;
