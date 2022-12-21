@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Layout from "./Layout";
 import Home from "../pages/Home";
-import LoginPage from "../pages/LoginPage";
+import Login from "../pages/Login";
 import Detail from "../pages/Detail";
 import PostCreate from "../pages/PostCreate";
 
@@ -20,7 +20,7 @@ const Router = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home minHeight={bodyHeight} />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/post/:id" element={<Detail minHeight={bodyHeight} />} />
           <Route path="/post" element={<PostCreate />} />
         </Routes>
