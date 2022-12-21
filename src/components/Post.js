@@ -14,14 +14,14 @@ function Post({ width = 18, post, isApplied = false, isPublisher = false }) {
     <Wrapper width={`${width}%`}>
       <Title>{post.title}</Title>
       <SubTitle>👨‍✈{post.nickname} 선장님이 이끄는 스터디</SubTitle>
-      <TagBox>
+      <div>
         <Tag type="level" text={post.level}></Tag>
-      </TagBox>
-      <TagBox>
+      </div>
+      <div>
         {post.category.map((v) => (
           <Tag key={v} type="category" text={v}></Tag>
         ))}
-      </TagBox>
+      </div>
       <InfoBox>
         <Label>모집기간</Label>
         <Info>{`${dateTimeParser(post.recruitmentEndDay)} 까지`}</Info>
@@ -86,10 +86,6 @@ const Title = styled.h2`
 
 const SubTitle = styled.div`
   font-size: 14px;
-`;
-
-const TagBox = styled.div`
-  padding: 10px 0;
 `;
 
 const InfoBox = styled.div`
