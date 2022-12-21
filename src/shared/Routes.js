@@ -7,6 +7,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Detail from "../pages/Detail";
 import PostCreate from "../pages/PostCreate";
+import User from "../pages/User";
 
 const Router = () => {
   const [bodyHeight, setBodyHeight] = useState(0);
