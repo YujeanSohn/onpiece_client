@@ -19,9 +19,9 @@ export const __getPosts = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const { data } = await client.get(`/posts`);
-      return thunkAPI.fulfillWithValue(data);
+      return thunkAPI.fulfillWithValue(data.allPost);
     } catch (e) {
-      alert(`getPostsError: ${e}`);
+      thunkAPI.rejectWithValue(e);
     }
   }
 );
@@ -100,6 +100,9 @@ const postsSlice = createSlice({
       .addCase(__getPosts.fulfilled, (state, action) => {
         state.isLoading = false;
         state.posts = action.payload;
+      })
+      .addCase(__getPosts.rejected, (state, action) => {
+        alert(action.payload);
       })
       .addCase(__addPost.pending, (state) => {
         state.isLoading = true;
