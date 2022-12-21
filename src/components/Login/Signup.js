@@ -158,7 +158,7 @@ function Signup({ handleChangeForm }) {
                 type="password"
                 placeholder="패스워드를 입력해 주세요"
                 onChange={onChangePassword}
-                disabled={!isNicknameChecked}
+                disabled={!isNicknameChecked || isNicknameDuplicated}
                 required
               />
             </Content>
@@ -170,7 +170,7 @@ function Signup({ handleChangeForm }) {
                 type="password"
                 placeholder="패스워드를 한번 더 입력해 주세요"
                 onChange={handlePWChange}
-                disabled={!isNicknameChecked}
+                disabled={!isNicknameChecked || isNicknameDuplicated}
                 required
               />
               <ToggleMsg
@@ -186,7 +186,7 @@ function Signup({ handleChangeForm }) {
               <Input
                 placeholder="소개글을 입력해 주세요(선택)"
                 onChange={onChangeDescription}
-                disabled={!isNicknameChecked}
+                disabled={!isNicknameChecked || isNicknameDuplicated}
               />
             </Content>
           </InputWrapper>
