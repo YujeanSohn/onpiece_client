@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
@@ -6,11 +6,11 @@ import Post from "../Post";
 
 import { __getPostsStatics } from "../../redux/modules/PostsSlice";
 
-function Promotion(props) {
-  //   const dispatch = useDispatch();
-  //   useEffect(() => {
-  //     dispatch(__getPostsStatics());
-  //   }, []);
+function Promotion() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(__getPostsStatics());
+  }, []);
   const totalPostsCount = useSelector((store) => store.posts.totalPostsCount);
   const completedPostsCount = useSelector(
     (store) => store.posts.completedPostsCount
@@ -85,4 +85,4 @@ const PostList = styled.div`
   }
 `;
 
-export default Promotion;
+export default memo(Promotion);
