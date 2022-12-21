@@ -6,9 +6,11 @@ import Progressbar from "./Progressbar";
 import dateTimeParser from "../tools/dateTimeParser";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
+import { useSelector } from "react-redux";
 
 function Post({ width = 18, post, isApplied = false, isPublisher = false }) {
   const navigate = useNavigate();
+  const isLogin = useSelector((store) => store.user.isLogin);
 
   return (
     <Wrapper width={`${width}%`}>
@@ -47,7 +49,7 @@ function Post({ width = 18, post, isApplied = false, isPublisher = false }) {
           ></Progressbar>
         </Info>
       </InfoBox>
-      <BtnWrapper>
+      <BtnWrapper show={isLogin}>
         {isApplied ? (
           <Button type="cancel" text="하차하기" />
         ) : (
@@ -107,7 +109,7 @@ const Info = styled.div`
 
 const BtnWrapper = styled.div`
   width: 100%;
-  display: flex;
+  display: ${(props) => (props.show ? "flex" : "none")};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

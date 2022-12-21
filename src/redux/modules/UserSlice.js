@@ -1,15 +1,62 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import client from "../../api/client";
+import client, { nonTokenClient } from "../../api/client";
 
-const initialState = {
-  id: 0,
-  isLogin: false,
-  applied: [],
-  isLoading: false,
-  emailCheck: false,
-  nicknameCheck: false,
-};
+export const __emailCheck = createAsyncThunk(
+  "emailCheck",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await nonTokenClient.get(
+        `/users/signup/emailNnickname?email=${payload.Email}&nickname=${""}`
+      );
+      return thunkAPI.fulfillWithValue(data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const __nicknameCheck = createAsyncThunk(
+  "nicknameCheck",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await nonTokenClient.get(
+        `/users/signup/emailNnickname?email=${""}&nickname=${payload.Name}`
+      );
+      return thunkAPI.fulfillWithValue(data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const __signUp = createAsyncThunk(
+  "signUp",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await nonTokenClient.post("/users/signup", payload);
+      window.location.href = "/login";
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const __signIn = createAsyncThunk(
+  "signin",
+  async (payload, thunkAPI) => {
+    try {
+      const response = await nonTokenClient.post("/users/login", payload);
+      localStorage.setItem("accessToken", response.data.token);
+      alert("로그인 성공!");
+      return thunkAPI.fulfillWithValue(response.data);
+    } catch (error) {
+      alert("회원정보가 없습니다!");
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 
 export const __getAppliedStudies = createAsyncThunk(
   "getAppliedStudies",
@@ -23,66 +70,16 @@ export const __getAppliedStudies = createAsyncThunk(
   }
 );
 
-export const __signUp = createAsyncThunk(
-  "signUp",
-  async (payload, thunkAPI) => {
-    try {
-      const { data } = await client.post("/users/signup", payload);
-      window.location.href = "/login";
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
-export const __emailCheck = createAsyncThunk(
-  "emailCheck",
-  async (payload, thunkAPI) => {
-    try {
-      const { data } = await client.get(
-        `/users/signup/emailNnickname?email=${payload.Email}&nickname=${""}`
-      );
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
-export const __nicknameCheck = createAsyncThunk(
-  "nicknameCheck",
-  async (payload, thunkAPI) => {
-    try {
-      const { data } = await client.get(
-        `/users/signup/emailNnickname?email=${""}&nickname=${payload.Name}`
-      );
-      console.log(data);
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
-export const __signIn = createAsyncThunk(
-  "signin",
-  async (payload, thunkAPI) => {
-    try {
-      const response = await client.post("/users/login", payload);
-      localStorage.setItem("accessToken", response.data.token);
-      window.alert("로그인 성공!");
-      return thunkAPI.fulfillWithValue(response.data);
-    } catch (error) {
-      console.log(error);
-      window.alert("회원정보가 없습니다!");
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
+const initialState = {
+  id: 0,
+  isLogin: false,
+  applied: [],
+  isLoading: false,
+  isEmailChecked: false,
+  isEmailDuplicated: false,
+  isNicknameChecked: false,
+  isNicknameDuplicated: false,
+};
 
 const UserSlice = createSlice({
   name: "user",
@@ -99,24 +96,28 @@ const UserSlice = createSlice({
       .addCase(__emailCheck.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__emailCheck.fulfilled, (state, action) => {
+      .addCase(__emailCheck.fulfilled, (state) => {
         state.isLoading = false;
-        state.emailCheck = false;
+        state.isEmailChecked = true;
+        state.isEmailDuplicated = false;
       })
-      .addCase(__emailCheck.rejected, (state, action) => {
+      .addCase(__emailCheck.rejected, (state) => {
         state.isLoading = false;
-        state.emailCheck = true;
+        state.isEmailChecked = true;
+        state.isEmailDuplicated = true;
       })
       .addCase(__nicknameCheck.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__nicknameCheck.fulfilled, (state, action) => {
+      .addCase(__nicknameCheck.fulfilled, (state) => {
         state.isLoading = false;
-        state.nicknameCheck = false;
+        state.isNicknameChecked = true;
+        state.isNicknameDuplicated = false;
       })
-      .addCase(__nicknameCheck.rejected, (state, action) => {
+      .addCase(__nicknameCheck.rejected, (state) => {
         state.isLoading = false;
-        state.nicknameCheck = true;
+        state.isNicknameChecked = true;
+        state.isNicknameDuplicated = true;
       })
       .addCase(__signIn.pending, (state) => {
         state.isLoading = true;
