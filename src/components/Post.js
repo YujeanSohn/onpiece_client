@@ -1,12 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import Tag from "./Tag";
 import Progressbar from "./Progressbar";
-import dateTimeParser from "../tools/dateTimeParser";
-import { useNavigate } from "react-router-dom";
 import Button from "./Button";
-import { useSelector } from "react-redux";
+import dateTimeParser from "../tools/dateTimeParser";
 
 function Post({ width = 18, post, isApplied = false, isPublisher = false }) {
   const navigate = useNavigate();

@@ -34,10 +34,8 @@ export const __signUp = createAsyncThunk(
   "signUp",
   async (payload, thunkAPI) => {
     try {
-      const { data } = await nonTokenClient.post("/users/signup", payload);
-      alert("회원가입이 완료되었습니다");
-      window.location.href = "/login";
-      return thunkAPI.fulfillWithValue(data.data);
+      await nonTokenClient.post("/users/signup", payload);
+      return alert("회원가입이 완료되었습니다");
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -48,12 +46,37 @@ export const __signIn = createAsyncThunk(
   "signin",
   async (payload, thunkAPI) => {
     try {
-      const response = await nonTokenClient.post("/users/login", payload);
-      localStorage.setItem("accessToken", response.data.token);
-      return thunkAPI.fulfillWithValue(response.data);
+      const { data } = await nonTokenClient.post("/users/login", payload);
+      localStorage.setItem("accessToken", data.token);
+      localStorage.setItem("userId", data.userId);
+      return thunkAPI.fulfillWithValue(data);
     } catch (error) {
       alert("회원정보가 없습니다!");
       return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const __applyStudy = createAsyncThunk(
+  "applyStudy",
+  async (payload, thunkAPI) => {
+    try {
+      await client.post(`/posts/${payload.postId}/apply`);
+      return thunkAPI.fulfillWithValue(payload);
+    } catch (e) {
+      alert(`applyStudyError: ${e}`);
+    }
+  }
+);
+
+export const __dropStudy = createAsyncThunk(
+  "dropStudy",
+  async (payload, thunkAPI) => {
+    try {
+      await client.delete(`/posts/${payload.postId}/apply`);
+      return thunkAPI.fulfillWithValue(payload);
+    } catch (e) {
+      alert(`dropStudyError: ${e}`);
     }
   }
 );
@@ -108,10 +131,9 @@ export const __userDescriptionUpdate = createAsyncThunk(
   }
 );
 
-
 const initialState = {
-  isLogin: localStorage.getItem("accessToken") !== undefined ? true : false,
-  userinfo: {},
+  isLogin: !localStorage.getItem("accessToken") ? false : true,
+  userInfo: {},
   applied: [],
   finished: [],
   isLoading: false,
@@ -130,27 +152,6 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(__getUserInfo.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(__getUserInfo.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.userinfo = action.payload;
-      })
-      .addCase(__getAppliedStudies.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(__getAppliedStudies.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.applied = action.payload;
-      })
-      .addCase(__getFinishedStudy.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(__getFinishedStudy.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.finished = action.payload;
-      })
       .addCase(__emailCheck.pending, (state) => {
         state.isLoading = true;
       })
@@ -176,13 +177,54 @@ const userSlice = createSlice({
       .addCase(__signIn.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__signIn.fulfilled, (state) => {
+      .addCase(__signIn.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLogin = true;
+        state.userInfo = {
+          userId: action.payload.userId,
+          nickname: action.payload.nickname,
+        };
       })
       .addCase(__signIn.rejected, (state) => {
         state.isLoading = false;
         state.isLogin = false;
+      })
+      .addCase(__applyStudy.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__applyStudy.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const applied = [...state.applied];
+        state.applied = [...applied, action.payload];
+      })
+      .addCase(__dropStudy.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__dropStudy.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const applied = [...state.applied];
+        state.applied = applied.filter((v) => v.postId !== action.payload);
+      })
+      .addCase(__getAppliedStudies.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getAppliedStudies.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.applied = action.payload;
+      })
+      .addCase(__getFinishedStudy.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getFinishedStudy.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.finished = action.payload;
+      })
+      .addCase(__getUserInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getUserInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userInfo = action.payload;
       });
   },
 });

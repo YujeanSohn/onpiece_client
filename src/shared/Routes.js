@@ -22,12 +22,13 @@ const Router = () => {
 
   return (
     <BrowserRouter>
-      <Header ref={ref} show={isLogin} />
+      {isLogin ? <Header ref={ref} /> : <></>}
       <Routes>
         <Route path="/" element={<Home minHeight={bodyHeight} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/post/:id" element={<Detail minHeight={bodyHeight} />} />
         <Route path="/post" element={<PostCreate />} />
+        <Route path="/user/:id" element={<User />} />
       </Routes>
     </BrowserRouter>
   );
