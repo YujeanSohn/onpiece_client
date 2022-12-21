@@ -1,6 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import client from "../../api/client";
+
+export const __addPost = createAsyncThunk(
+  "addPost",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await client.post(`/posts`, payload);
+      console.log(data);
+      return thunkAPI.fulfillWithValue(payload);
+    } catch (e) {
+      alert(`addPostError: ${e}`);
+    }
+  }
+);
 
 const initialState = {
   posts: [
@@ -42,27 +55,17 @@ const initialState = {
   isLoading: false,
 };
 
-export const __post = createAsyncThunk("post", async (payload, thunkAPI) => {
-  try {
-    //const { data } = await axios.post(`api/posts`, payload);
-    console.log(payload);
-    //return thunkAPI.fulfillWithValue(data.data);
-  } catch (e) {
-    alert(`postsError: ${e}`);
-  }
-});
-
 const postsSlice = createSlice({
   name: "posts",
   initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(__post.pending, (state) => {
+      .addCase(__addPost.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__post.fulfilled, (state, action) => {
+      .addCase(__addPost.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.posts = action.payload;
+        state.posts = [...state.posts, action.payload];
       });
   },
 });
