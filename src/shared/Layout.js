@@ -1,7 +1,9 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import Button from "../components/Button";
+import { logout } from "../redux/modules/UserSlice";
 
 const Header = styled.div`
   padding: 40px;
@@ -29,6 +31,12 @@ const Body = styled.div`
 `;
 
 const Layout = React.forwardRef((props, ref) => {
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logout());
+    window.location.replace("/login");
+  };
+
   if (window.location.pathname !== "/login") {
     return (
       <>
@@ -36,7 +44,7 @@ const Layout = React.forwardRef((props, ref) => {
           <Logo onClick={() => window.location.replace("/")}>🛶 Onpiece</Logo>
           <div>
             <WelcomeMsg>유진님 환영합니다.</WelcomeMsg>
-            <Button type="accent" text={`LOGOUT`} />
+            <Button type="accent" text={`LOGOUT`} handler={handleLogout} />
           </div>
         </Header>
         <Body>{props.children}</Body>

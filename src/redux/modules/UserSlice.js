@@ -7,7 +7,7 @@ export const __emailCheck = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const { data } = await nonTokenClient.get(
-        `/users/signup/emailNnickname?email=${payload.Email}&nickname=${""}`
+        `/users/signup/emailNnickname?email=${payload.email}&nickname=${""}`
       );
       return thunkAPI.fulfillWithValue(data);
     } catch (error) {
@@ -21,7 +21,7 @@ export const __nicknameCheck = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const { data } = await nonTokenClient.get(
-        `/users/signup/emailNnickname?email=${""}&nickname=${payload.Name}`
+        `/users/signup/emailNnickname?email=${""}&nickname=${payload.name}`
       );
       return thunkAPI.fulfillWithValue(data);
     } catch (error) {
@@ -80,9 +80,15 @@ const initialState = {
   isNicknameDuplicated: false,
 };
 
-const UserSlice = createSlice({
+const userSlice = createSlice({
   name: "user",
   initialState,
+  reducers: {
+    logout: (state) => {
+      localStorage.removeItem("accessToken");
+      state.isLogin = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(__getAppliedStudies.pending, (state) => {
@@ -117,15 +123,16 @@ const UserSlice = createSlice({
       .addCase(__signIn.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__signIn.fulfilled, (state, action) => {
+      .addCase(__signIn.fulfilled, (state) => {
         state.isLoading = false;
         state.isLogin = true;
       })
-      .addCase(__signIn.rejected, (state, action) => {
+      .addCase(__signIn.rejected, (state) => {
         state.isLoading = false;
         state.isLogin = false;
       });
   },
 });
 
-export default UserSlice.reducer;
+export const { logout } = userSlice.actions;
+export default userSlice.reducer;
