@@ -73,7 +73,7 @@ export const __getAppliedStudies = createAsyncThunk(
 
 const initialState = {
   id: 0,
-  isLogin: false,
+  isLogin: localStorage.getItem("accessToken") !== undefined ? true : false,
   applied: [],
   isLoading: false,
   isEmailDuplicated: false,
