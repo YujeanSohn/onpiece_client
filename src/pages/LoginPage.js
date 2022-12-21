@@ -10,6 +10,7 @@ import {
   __emailCheck,
   __nicknameCheck,
 } from "../redux/modules/UserSlice";
+import useHandler from "../hooks/useHandler";
 
 function LoginPage() {
   const posts = useSelector((store) => store.posts.posts);
@@ -19,35 +20,13 @@ function LoginPage() {
 
   const dispatch = useDispatch();
 
-  const [Email, setEmail] = useState("");
-  const [Name, setName] = useState("");
-  const [Password, setPassword] = useState("");
-  const [ConfirmPassword, setConfirmPassword] = useState("");
-  const [UserDesc, setUserDesc] = useState("");
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setloginPassword] = useState("");
-
-  const onEmailHandler = (event) => {
-    setEmail(event.currentTarget.value);
-  };
-  const onNameHandler = (event) => {
-    setName(event.currentTarget.value);
-  };
-  const onPasswordHandler = (event) => {
-    setPassword(event.currentTarget.value);
-  };
-  const onConfirmPasswordHandler = (event) => {
-    setConfirmPassword(event.currentTarget.value);
-  };
-  const onUserDescHandler = (event) => {
-    setUserDesc(event.currentTarget.value);
-  };
-  const LoginEmailHandler = (event) => {
-    setLoginEmail(event.currentTarget.value);
-  };
-  const LoginPasswordHandler = (event) => {
-    setloginPassword(event.currentTarget.value);
-  };
+  const [Email, onEmailHandler] = useHandler("");
+  const [Name, onNameHandler] = useHandler("");
+  const [Password, onPasswordHandler] = useHandler("");
+  const [ConfirmPassword, onConfirmPasswordHandler] = useHandler("");
+  const [UserDesc, onUserDescHandler] = useHandler("");
+  const [loginEmail, LoginEmailHandler] = useHandler("");
+  const [loginPassword, LoginPasswordHandler] = useHandler("");
 
   const onLoginHandler = (event) => {
     // 버튼만 누르면 리로드 되는것을 막아줌
