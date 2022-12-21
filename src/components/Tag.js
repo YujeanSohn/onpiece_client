@@ -1,14 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Wrapper = styled.span`
-  margin-right: 10px;
-  padding: 10px;
-  border-radius: 15px;
-  background-color: ${(props) => props.bgColor};
-`;
-
-function Tag({ type, text, handler }) {
+function Tag({ type, text, isRemovable, handler }) {
   let bgColor = "";
   if (type === "level") {
     switch (text) {
@@ -59,23 +52,36 @@ function Tag({ type, text, handler }) {
       case "PHP":
         bgColor = "#fdcb6e";
         break;
-
       default:
         console.log("wrong category type");
         bgColor = "#cccccc";
     }
   }
 
-  let cancel = "";
-  if (type === "category") {
-    cancel = "X";
-  }
-
   return (
-    <Wrapper onClick={handler} bgColor={bgColor}>
-      {text} {cancel}
+    <Wrapper bgColor={bgColor}>
+      {text}{" "}
+      <Btn show={isRemovable} onClick={handler}>
+        ✖
+      </Btn>
     </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  float: left;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: ${(props) => props.bgColor};
+`;
+
+const Btn = styled.button`
+  display: ${(props) => (props.show ? "" : "none")};
+  border: none;
+  background: transparent;
+  :hover {
+    cursor: pointer;
+  }
+`;
 
 export default Tag;
