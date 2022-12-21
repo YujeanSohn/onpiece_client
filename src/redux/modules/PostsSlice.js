@@ -133,7 +133,11 @@ const postsSlice = createSlice({
       })
       .addCase(__getPost.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.post = action.payload;
+        state.post = {
+          ...action.payload.post,
+          exPosts: action.payload.exPosts,
+          applicants: action.payload.applicants,
+        };
       })
       .addCase(__getPost.rejected, (state, action) => {
         alert(action.payload);

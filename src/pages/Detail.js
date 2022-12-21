@@ -140,7 +140,7 @@ function Detail({ minHeight }) {
                   </Label>
                   <StudyTitleBoxWrapper>
                     {post.exPosts.map((v) => (
-                      <StudyTitleBox key={v}>{v}</StudyTitleBox>
+                      <StudyTitleBox key={v.postId}>{v.title}</StudyTitleBox>
                     ))}
                   </StudyTitleBoxWrapper>
                 </DescriptionBox>
