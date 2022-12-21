@@ -110,8 +110,7 @@ export const __userDescriptionUpdate = createAsyncThunk(
 
 
 const initialState = {
-  id: 0,
-  isLogin: false,
+  isLogin: localStorage.getItem("accessToken") !== undefined ? true : false,
   userinfo: {},
   applied: [],
   finished: [],
