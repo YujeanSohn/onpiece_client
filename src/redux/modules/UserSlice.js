@@ -35,6 +35,7 @@ export const __signUp = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const { data } = await nonTokenClient.post("/users/signup", payload);
+      alert("회원가입이 완료되었습니다");
       window.location.href = "/login";
       return thunkAPI.fulfillWithValue(data.data);
     } catch (error) {
@@ -75,9 +76,7 @@ const initialState = {
   isLogin: false,
   applied: [],
   isLoading: false,
-  isEmailChecked: false,
   isEmailDuplicated: false,
-  isNicknameChecked: false,
   isNicknameDuplicated: false,
 };
 
@@ -98,12 +97,10 @@ const UserSlice = createSlice({
       })
       .addCase(__emailCheck.fulfilled, (state) => {
         state.isLoading = false;
-        state.isEmailChecked = true;
         state.isEmailDuplicated = false;
       })
       .addCase(__emailCheck.rejected, (state) => {
         state.isLoading = false;
-        state.isEmailChecked = true;
         state.isEmailDuplicated = true;
       })
       .addCase(__nicknameCheck.pending, (state) => {
@@ -111,12 +108,10 @@ const UserSlice = createSlice({
       })
       .addCase(__nicknameCheck.fulfilled, (state) => {
         state.isLoading = false;
-        state.isNicknameChecked = true;
         state.isNicknameDuplicated = false;
       })
       .addCase(__nicknameCheck.rejected, (state) => {
         state.isLoading = false;
-        state.isNicknameChecked = true;
         state.isNicknameDuplicated = true;
       })
       .addCase(__signIn.pending, (state) => {

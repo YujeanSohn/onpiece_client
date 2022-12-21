@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
@@ -14,10 +14,6 @@ import {
 
 function Signup({ handleChangeForm }) {
   const dispatch = useDispatch();
-  const isEmailChecked = useSelector((store) => store.user.isEmailChecked);
-  const isNicknameChecked = useSelector(
-    (store) => store.user.isNicknameChecked
-  );
   const isEmailDuplicated = useSelector(
     (store) => store.user.isEmailDuplicated
   );
@@ -30,27 +26,55 @@ function Signup({ handleChangeForm }) {
   const [password, onChangePassword] = useHandler("");
   const [passwordCheck, onChangePasswordCheck] = useHandler("");
   const [description, onChangeDescription] = useHandler("");
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
+  // update isEmailChecked to false if email state is changed
+  useEffect(() => {
+    setIsEmailChecked(false);
+  }, [email]);
+  //  update isEmailChecked to true if check email duplication is done
   const checkEmailDuplication = () => {
     if (email.length === 0) return alert("이메일을 입력해주세요");
     dispatch(__emailCheck({ email }));
+    setIsEmailChecked(true);
   };
 
+  // update isNicknameChecked to false if nickname state is changed
+  useEffect(() => {
+    setIsNicknameChecked(false);
+  }, [name]);
+  // update isNicknameChecked to true if check nickname duplication is done
   const checkNicknameDuplication = () => {
     if (name.length === 0) return alert("닉네임을 입력해주세요");
     dispatch(__nicknameCheck({ name }));
+    setIsNicknameChecked(true);
   };
 
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
+  // update isPWSame on password and passwordCheck state change
+  const [isPWSame, setIsPWSame] = useState(false);
+  useEffect(() => {
+    if (password.length !== 0 && password === passwordCheck) {
+      setIsPWSame(true);
+      return;
+    }
 
-    if (password !== passwordCheck)
-      return alert("비밀번호가 일치하지 않습니다.");
+    setIsPWSame(false);
+  }, [password, passwordCheck]);
+  // update isPWChecked on password check first onChange event
+  // to show error message after first validation.
+  const [isPWChecked, setIsPWChecked] = useState(false);
+  const handlePWChange = (e) => {
+    if (!isPWChecked) setIsPWChecked(true);
+    onChangePasswordCheck(e);
+  };
 
+  const handleSubmit = () => {
     let data = {
       email: email,
       nickname: name,
       password: password,
+      confirm: passwordCheck,
       description: description,
     };
 
@@ -58,7 +82,7 @@ function Signup({ handleChangeForm }) {
   };
   return (
     <Wrapper>
-      <ContentWrapper onSubmit={onSubmitHandler}>
+      <ContentWrapper>
         <RegisterForm>
           <InputWrapper>
             <Label>Email</Label>
@@ -69,6 +93,16 @@ function Signup({ handleChangeForm }) {
                 required
                 onChange={onChangeEmail}
               />
+            </Content>
+            <Button
+              type="default"
+              text="중복확인"
+              width="20%"
+              handler={checkEmailDuplication}
+            ></Button>
+          </InputWrapper>
+          <MsgWrapper show={isEmailChecked}>
+            <Msg show={isEmailChecked}>
               <ToggleMsg
                 text={
                   isEmailChecked && !isEmailDuplicated
@@ -80,22 +114,28 @@ function Signup({ handleChangeForm }) {
                 }
                 show={isEmailChecked}
               />
-            </Content>
-            <Button
-              type="default"
-              text="중복확인"
-              width="20%"
-              handler={checkEmailDuplication}
-            ></Button>
-          </InputWrapper>
+            </Msg>
+          </MsgWrapper>
           <InputWrapper>
             <Label>닉네임</Label>
             <Content>
               <Input
                 placeholder="닉네임을 입력해 주세요"
                 required
+                disabled={!isEmailChecked || isEmailDuplicated}
                 onChange={onChangeName}
               />
+            </Content>
+            <Button
+              type="default"
+              text="중복확인"
+              width="20%"
+              handler={checkNicknameDuplication}
+              disabled={!isEmailChecked || isEmailDuplicated}
+            ></Button>
+          </InputWrapper>
+          <MsgWrapper show={isNicknameChecked}>
+            <Msg show={isNicknameChecked}>
               <ToggleMsg
                 text={
                   isNicknameChecked && !isNicknameDuplicated
@@ -109,14 +149,8 @@ function Signup({ handleChangeForm }) {
                 }
                 show={isNicknameChecked}
               />
-            </Content>
-            <Button
-              type="default"
-              text="중복확인"
-              width="20%"
-              handler={checkNicknameDuplication}
-            ></Button>
-          </InputWrapper>
+            </Msg>
+          </MsgWrapper>
           <InputWrapper>
             <Label>PW</Label>
             <Content>
@@ -124,6 +158,7 @@ function Signup({ handleChangeForm }) {
                 type="password"
                 placeholder="패스워드를 입력해 주세요"
                 onChange={onChangePassword}
+                disabled={!isNicknameChecked}
                 required
               />
             </Content>
@@ -134,10 +169,15 @@ function Signup({ handleChangeForm }) {
               <Input
                 type="password"
                 placeholder="패스워드를 한번 더 입력해 주세요"
-                onChange={onChangePasswordCheck}
+                onChange={handlePWChange}
+                disabled={!isNicknameChecked}
                 required
               />
-              <ToggleMsg />
+              <ToggleMsg
+                text="입력하신 비밀번호가 일치하지 않습니다"
+                type="error"
+                show={isPWChecked && !isPWSame}
+              />
             </Content>
           </InputWrapper>
           <InputWrapper>
@@ -146,6 +186,7 @@ function Signup({ handleChangeForm }) {
               <Input
                 placeholder="소개글을 입력해 주세요(선택)"
                 onChange={onChangeDescription}
+                disabled={!isNicknameChecked}
               />
             </Content>
           </InputWrapper>
@@ -157,7 +198,13 @@ function Signup({ handleChangeForm }) {
             width="180px"
             handler={handleChangeForm}
           />
-          <Button type="main" text="가입하기" width="180px"></Button>
+          <Button
+            type="main"
+            text="가입하기"
+            width="180px"
+            disabled={!isEmailChecked || !isNicknameChecked || !isPWSame}
+            handler={handleSubmit}
+          ></Button>
         </BtnWrapper>
       </ContentWrapper>
     </Wrapper>
@@ -172,7 +219,7 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const ContentWrapper = styled.form`
+const ContentWrapper = styled.div`
   width: 80%;
   display: flex;
   flex-direction: column;
@@ -221,6 +268,18 @@ const Input = styled.input`
   box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.3);
   font-size: 15px;
   text-indent: 10px;
+`;
+
+const MsgWrapper = styled.div`
+  width: 100%;
+  display: ${(props) => (props.show ? "flex" : "none")};
+  flex-direction: row;
+  justify-content: flex-end;
+`;
+
+const Msg = styled.div`
+  width: 85%;
+  display: ${(props) => (props.show ? "flex" : "none")};
 `;
 
 const BtnWrapper = styled.div`
