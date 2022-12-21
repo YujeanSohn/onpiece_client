@@ -50,7 +50,6 @@ export const __signIn = createAsyncThunk(
     try {
       const response = await nonTokenClient.post("/users/login", payload);
       localStorage.setItem("accessToken", response.data.token);
-      alert("로그인 성공!");
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error) {
       alert("회원정보가 없습니다!");
