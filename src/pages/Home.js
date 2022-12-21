@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
@@ -25,12 +26,17 @@ function Home({ minHeight }) {
     }
   }, [minHeight, ref, posts.length]);
 
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate("/post");
+  };
+
   return (
     <Wrapper minHeight={`${minHeight}px`}>
       <Content>
         <ContentHeader ref={ref}>
           <Title>스터디 목록</Title>
-          <Button text={`스터디 모집하기 🛟`} />
+          <Button text={`스터디 모집하기 🛟`} handler={handleNavigate} />
         </ContentHeader>
         <PostList>
           {posts.length === 0 ? (
