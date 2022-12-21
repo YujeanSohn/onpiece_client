@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-import Layout from "./Layout";
+import Header from "./Header";
 import Home from "../pages/Home";
-import LoginPage from "../pages/LoginPage";
+import Login from "../pages/Login";
 import Detail from "../pages/Detail";
 import PostCreate from "../pages/PostCreate";
 import User from "../pages/User";
@@ -13,21 +14,22 @@ const Router = () => {
   const ref = useRef();
   useEffect(() => {
     if (!ref?.current) return;
+    if (window.innerHeight === 0) return;
     setBodyHeight(window.innerHeight - ref.current.clientHeight);
-  }, [ref]);
+  }, [window.innerHeight, ref]);
+
+  const isLogin = useSelector((store) => store.user.isLogin);
 
   return (
-    <Layout ref={ref}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home minHeight={bodyHeight} />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/post/:id" element={<Detail minHeight={bodyHeight} />} />
-          <Route path="/post" element={<PostCreate />} />
-          <Route path="/mypage/:id" element={<User />} />
-        </Routes>
-      </BrowserRouter>
-    </Layout>
+    <BrowserRouter>
+      <Header ref={ref} show={isLogin} />
+      <Routes>
+        <Route path="/" element={<Home minHeight={bodyHeight} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/post/:id" element={<Detail minHeight={bodyHeight} />} />
+        <Route path="/post" element={<PostCreate />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

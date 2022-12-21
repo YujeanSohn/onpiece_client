@@ -2,100 +2,15 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import client, { nonTokenClient } from "../../api/client";
 
-const initialState = {
-  id: 0,
-  isLogin: false,
-  userinfo: {},
-  applied: [],
-  finished: [],
-  isLoading: false,
-  emailCheck: false,
-  nicknameCheck: false,
-};
-
-export const __userDescriptionUpdate = createAsyncThunk(
-  "userDescUpdate",
-  async (payload, thunkAPI) => {
-    try {
-      console.log(payload);
-      const { data } = await client.put(`/users/${payload.id}`, {
-        description: payload.description,
-      });
-      return thunkAPI.fulfillWithValue(data);
-    } catch (e) {
-      alert(`userDescriptionUpdate: ${e}`);
-    }
-  }
-);
-
-export const __getUserInfo = createAsyncThunk(
-  "getUserInfo",
-  async (userId, thunkAPI) => {
-    try {
-      const { data } = await client.get(`/users/${userId}`);
-      console.log(data);
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (e) {
-      console.log(e);
-      alert(`getUserInfo: ${e}`);
-    }
-  }
-);
-
-export const __getAppliedStudies = createAsyncThunk(
-  "getAppliedStudies",
-  async (userId, thunkAPI) => {
-    try {
-      console.log("getApplied");
-      const { data } = await client.get(`/users/${userId}/apply`);
-      console.log(data);
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (e) {
-      console.log(e);
-      alert(`getAppliedStudiesError: ${e}`);
-    }
-  }
-);
-
-export const __getFinishedStudy = createAsyncThunk(
-  "getFinishedStudy",
-  async (userId, thunkAPI) => {
-    try {
-      console.log("getApplied");
-      const { data } = await client.get(`/users/${userId}/posts`);
-      console.log(data);
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (e) {
-      console.log(e);
-      alert(`getAppliedStudiesError: ${e}`);
-    }
-  }
-);
-
-export const __signUp = createAsyncThunk(
-  "signUp",
-  async (payload, thunkAPI) => {
-    try {
-      const { data } = await client.post("/users/signup", payload);
-      window.location.href = "/login";
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
 export const __emailCheck = createAsyncThunk(
   "emailCheck",
   async (payload, thunkAPI) => {
     try {
-      const { data } = await client.get(
-        `/users/signup/emailNnickname?email=${payload.Email}&nickname=${""}`
+      const { data } = await nonTokenClient.get(
+        `/users/signup/emailNnickname?email=${payload.email}&nickname=${""}`
       );
-      return thunkAPI.fulfillWithValue(data.data);
+      return thunkAPI.fulfillWithValue(data);
     } catch (error) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -105,13 +20,25 @@ export const __nicknameCheck = createAsyncThunk(
   "nicknameCheck",
   async (payload, thunkAPI) => {
     try {
-      const { data } = await client.get(
-        `/users/signup/emailNnickname?email=${""}&nickname=${payload.Name}`
+      const { data } = await nonTokenClient.get(
+        `/users/signup/emailNnickname?email=${""}&nickname=${payload.name}`
       );
-      console.log(data);
+      return thunkAPI.fulfillWithValue(data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const __signUp = createAsyncThunk(
+  "signUp",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await nonTokenClient.post("/users/signup", payload);
+      alert("회원가입이 완료되었습니다");
+      window.location.href = "/login";
       return thunkAPI.fulfillWithValue(data.data);
     } catch (error) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -123,19 +50,85 @@ export const __signIn = createAsyncThunk(
     try {
       const response = await nonTokenClient.post("/users/login", payload);
       localStorage.setItem("accessToken", response.data.token);
-      window.alert("로그인 성공!");
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error) {
-      console.log(error);
-      window.alert("회원정보가 없습니다!");
+      alert("회원정보가 없습니다!");
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
-const UserSlice = createSlice({
+export const __getAppliedStudies = createAsyncThunk(
+  "getAppliedStudies",
+  async (userId, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/users/${userId}/apply`);
+      return thunkAPI.fulfillWithValue(data);
+    } catch (e) {
+      alert(`getAppliedStudiesError: ${e}`);
+    }
+  }
+);
+
+export const __getFinishedStudy = createAsyncThunk(
+  "getFinishedStudy",
+  async (userId, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/users/${userId}/posts`);
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (e) {
+      alert(`getAppliedStudiesError: ${e}`);
+    }
+  }
+);
+
+export const __getUserInfo = createAsyncThunk(
+  "getUserInfo",
+  async (userId, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/users/${userId}`);
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (e) {
+      alert(`getUserInfo: ${e}`);
+    }
+  }
+);
+
+export const __userDescriptionUpdate = createAsyncThunk(
+  "userDescUpdate",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await client.put(`/users/${payload.id}`, {
+        description: payload.description,
+      });
+      return thunkAPI.fulfillWithValue(data);
+    } catch (e) {
+      alert(`userDescriptionUpdate: ${e}`);
+    }
+  }
+);
+
+
+const initialState = {
+  id: 0,
+  isLogin: false,
+  userinfo: {},
+  applied: [],
+  finished: [],
+  isLoading: false,
+  isEmailDuplicated: false,
+  isNicknameDuplicated: false,
+};
+
+const userSlice = createSlice({
   name: "user",
   initialState,
+  reducers: {
+    logout: (state) => {
+      localStorage.removeItem("accessToken");
+      state.isLogin = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(__getUserInfo.pending, (state) => {
@@ -162,37 +155,38 @@ const UserSlice = createSlice({
       .addCase(__emailCheck.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__emailCheck.fulfilled, (state, action) => {
+      .addCase(__emailCheck.fulfilled, (state) => {
         state.isLoading = false;
-        state.emailCheck = false;
+        state.isEmailDuplicated = false;
       })
-      .addCase(__emailCheck.rejected, (state, action) => {
+      .addCase(__emailCheck.rejected, (state) => {
         state.isLoading = false;
-        state.emailCheck = true;
+        state.isEmailDuplicated = true;
       })
       .addCase(__nicknameCheck.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__nicknameCheck.fulfilled, (state, action) => {
+      .addCase(__nicknameCheck.fulfilled, (state) => {
         state.isLoading = false;
-        state.nicknameCheck = false;
+        state.isNicknameDuplicated = false;
       })
-      .addCase(__nicknameCheck.rejected, (state, action) => {
+      .addCase(__nicknameCheck.rejected, (state) => {
         state.isLoading = false;
-        state.nicknameCheck = true;
+        state.isNicknameDuplicated = true;
       })
       .addCase(__signIn.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(__signIn.fulfilled, (state, action) => {
+      .addCase(__signIn.fulfilled, (state) => {
         state.isLoading = false;
         state.isLogin = true;
       })
-      .addCase(__signIn.rejected, (state, action) => {
+      .addCase(__signIn.rejected, (state) => {
         state.isLoading = false;
         state.isLogin = false;
       });
   },
 });
 
-export default UserSlice.reducer;
+export const { logout } = userSlice.actions;
+export default userSlice.reducer;

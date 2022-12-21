@@ -1,13 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import client from "../../api/client";
+import client, { nonTokenClient } from "../../api/client";
+
+export const __getPostsStatics = createAsyncThunk(
+  "getPostsStatics",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await nonTokenClient.get(`/posts/statics`);
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (e) {
+      alert(`getPostsStaticsError: ${e}`);
+    }
+  }
+);
+
+export const __getPosts = createAsyncThunk(
+  "getPosts",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/posts`);
+      return thunkAPI.fulfillWithValue(data.allPost);
+    } catch (e) {
+      thunkAPI.rejectWithValue(e);
+    }
+  }
+);
 
 export const __addPost = createAsyncThunk(
   "addPost",
   async (payload, thunkAPI) => {
     try {
-      const { data } = await client.post(`/posts`, payload);
-      console.log(data);
+      await client.post(`/posts`, payload);
       return thunkAPI.fulfillWithValue(payload);
     } catch (e) {
       alert(`addPostError: ${e}`);
@@ -16,6 +39,8 @@ export const __addPost = createAsyncThunk(
 );
 
 const initialState = {
+  totalPostsCount: 0,
+  completedPostsCount: 0,
   posts: [
     {
       postId: 1,
@@ -60,6 +85,25 @@ const postsSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
+      .addCase(__getPostsStatics.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getPostsStatics.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.totalPostsCount = action.payload.totalPostsCount;
+        state.completedPostsCount = action.payload.completedPostsCount;
+        state.posts = action.payload.posts;
+      })
+      .addCase(__getPosts.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getPosts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.posts = action.payload;
+      })
+      .addCase(__getPosts.rejected, (state, action) => {
+        alert(action.payload);
+      })
       .addCase(__addPost.pending, (state) => {
         state.isLoading = true;
       })
