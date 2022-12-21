@@ -50,7 +50,6 @@ export const __signIn = createAsyncThunk(
     try {
       const response = await nonTokenClient.post("/users/login", payload);
       localStorage.setItem("accessToken", response.data.token);
-      alert("로그인 성공!");
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error) {
       alert("회원정보가 없습니다!");
@@ -71,10 +70,50 @@ export const __getAppliedStudies = createAsyncThunk(
   }
 );
 
+export const __getFinishedStudy = createAsyncThunk(
+  "getFinishedStudy",
+  async (userId, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/users/${userId}/posts`);
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (e) {
+      alert(`getAppliedStudiesError: ${e}`);
+    }
+  }
+);
+
+export const __getUserInfo = createAsyncThunk(
+  "getUserInfo",
+  async (userId, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/users/${userId}`);
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (e) {
+      alert(`getUserInfo: ${e}`);
+    }
+  }
+);
+
+export const __userDescriptionUpdate = createAsyncThunk(
+  "userDescUpdate",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await client.put(`/users/${payload.id}`, {
+        description: payload.description,
+      });
+      return thunkAPI.fulfillWithValue(data);
+    } catch (e) {
+      alert(`userDescriptionUpdate: ${e}`);
+    }
+  }
+);
+
+
 const initialState = {
-  id: 0,
   isLogin: localStorage.getItem("accessToken") !== undefined ? true : false,
+  userinfo: {},
   applied: [],
+  finished: [],
   isLoading: false,
   isEmailDuplicated: false,
   isNicknameDuplicated: false,
@@ -91,12 +130,26 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(__getUserInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getUserInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userinfo = action.payload;
+      })
       .addCase(__getAppliedStudies.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(__getAppliedStudies.fulfilled, (state, action) => {
         state.isLoading = false;
         state.applied = action.payload;
+      })
+      .addCase(__getFinishedStudy.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getFinishedStudy.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.finished = action.payload;
       })
       .addCase(__emailCheck.pending, (state) => {
         state.isLoading = true;
