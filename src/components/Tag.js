@@ -15,7 +15,6 @@ function Tag({ type, text, isRemovable, handler }) {
         bgColor = "#6c5ce7";
         break;
       default:
-        console.log("wrong level type");
         bgColor = "#cccccc";
     }
   }
@@ -53,7 +52,6 @@ function Tag({ type, text, isRemovable, handler }) {
         bgColor = "#fdcb6e";
         break;
       default:
-        console.log("wrong category type");
         bgColor = "#cccccc";
     }
   }
