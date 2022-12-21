@@ -98,7 +98,7 @@ function Detail({ minHeight }) {
               <div>{post.userDescription}</div>
               <Label>📜 {`${post.nickname} 선장님이 이끌었던 스터디`}</Label>
               <StudyTitleBoxWrapper>
-                {post.userPosts.map((v) => (
+                {post.exPosts.map((v) => (
                   <StudyTitleBox key={v}>{v}</StudyTitleBox>
                 ))}
               </StudyTitleBoxWrapper>
@@ -128,6 +128,7 @@ function Detail({ minHeight }) {
 const Wrapper = styled.div`
   width: 100%;
   min-height: ${(props) => props.minHeight};
+  background-color: ${(props) => props.theme.mainColor};
 `;
 
 const Content = styled.div`
