@@ -1,23 +1,72 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import client from "../../api/client";
+import client, { nonTokenClient } from "../../api/client";
 
 const initialState = {
   id: 0,
   isLogin: false,
+  userinfo: {},
   applied: [],
+  finished: [],
   isLoading: false,
   emailCheck: false,
   nicknameCheck: false,
 };
 
+export const __userDescriptionUpdate = createAsyncThunk(
+  "userDescUpdate",
+  async (payload, thunkAPI) => {
+    try {
+      console.log(payload);
+      const { data } = await client.put(`/users/${payload.id}`, {
+        description: payload.description,
+      });
+      return thunkAPI.fulfillWithValue(data);
+    } catch (e) {
+      alert(`userDescriptionUpdate: ${e}`);
+    }
+  }
+);
+
+export const __getUserInfo = createAsyncThunk(
+  "getUserInfo",
+  async (userId, thunkAPI) => {
+    try {
+      const { data } = await client.get(`/users/${userId}`);
+      console.log(data);
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (e) {
+      console.log(e);
+      alert(`getUserInfo: ${e}`);
+    }
+  }
+);
+
 export const __getAppliedStudies = createAsyncThunk(
   "getAppliedStudies",
   async (userId, thunkAPI) => {
     try {
+      console.log("getApplied");
       const { data } = await client.get(`/users/${userId}/apply`);
-      return thunkAPI.fulfillWithValue(data);
+      console.log(data);
+      return thunkAPI.fulfillWithValue(data.data);
     } catch (e) {
+      console.log(e);
+      alert(`getAppliedStudiesError: ${e}`);
+    }
+  }
+);
+
+export const __getFinishedStudy = createAsyncThunk(
+  "getFinishedStudy",
+  async (userId, thunkAPI) => {
+    try {
+      console.log("getApplied");
+      const { data } = await client.get(`/users/${userId}/posts`);
+      console.log(data);
+      return thunkAPI.fulfillWithValue(data.data);
+    } catch (e) {
+      console.log(e);
       alert(`getAppliedStudiesError: ${e}`);
     }
   }
@@ -72,7 +121,7 @@ export const __signIn = createAsyncThunk(
   "signin",
   async (payload, thunkAPI) => {
     try {
-      const response = await client.post("/users/login", payload);
+      const response = await nonTokenClient.post("/users/login", payload);
       localStorage.setItem("accessToken", response.data.token);
       window.alert("로그인 성공!");
       return thunkAPI.fulfillWithValue(response.data);
@@ -89,12 +138,26 @@ const UserSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
+      .addCase(__getUserInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getUserInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userinfo = action.payload;
+      })
       .addCase(__getAppliedStudies.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(__getAppliedStudies.fulfilled, (state, action) => {
         state.isLoading = false;
         state.applied = action.payload;
+      })
+      .addCase(__getFinishedStudy.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getFinishedStudy.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.finished = action.payload;
       })
       .addCase(__emailCheck.pending, (state) => {
         state.isLoading = true;
