@@ -1,14 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Wrapper = styled.span`
-  margin-right: 10px;
-  padding: 10px;
-  border-radius: 15px;
-  background-color: ${(props) => props.bgColor};
-`;
-
-function Tag({ type, text }) {
+function Tag({ type, text, isRemovable, handler }) {
   let bgColor = "";
   if (type === "level") {
     switch (text) {
@@ -29,27 +22,66 @@ function Tag({ type, text }) {
 
   if (type === "category") {
     switch (text) {
-      case "java":
-        bgColor = "#fab1a0";
+      case "JavaScript":
+        bgColor = "#fd79a8";
         break;
-      case "javascript":
+      case "HTML/CSS":
         bgColor = "#81ecec";
         break;
-      case "react":
-        bgColor = "#a29bfe";
+      case "SQL":
+        bgColor = "#00b894";
         break;
-      case "spring":
+      case "Python":
+        bgColor = "#00cec9";
+        break;
+      case "TypeScript":
+        bgColor = "#0984e3";
+        break;
+      case "Java":
+        bgColor = "#6c5ce7";
+        break;
+      case "Bash/Shell":
+        bgColor = "#b2bec3";
+        break;
+      case "C#":
+        bgColor = "#dfe6e9";
+        break;
+      case "C++":
+        bgColor = "#ffeaa7";
+        break;
+      case "PHP":
         bgColor = "#fdcb6e";
-        break;
-      case "node":
-        bgColor = "#636e72";
         break;
       default:
         console.log("wrong category type");
         bgColor = "#cccccc";
     }
   }
-  return <Wrapper bgColor={bgColor}>{text}</Wrapper>;
+
+  return (
+    <Wrapper bgColor={bgColor}>
+      {text}{" "}
+      <Btn show={isRemovable} onClick={handler}>
+        ✖
+      </Btn>
+    </Wrapper>
+  );
 }
+
+const Wrapper = styled.div`
+  float: left;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: ${(props) => props.bgColor};
+`;
+
+const Btn = styled.button`
+  display: ${(props) => (props.show ? "" : "none")};
+  border: none;
+  background: transparent;
+  :hover {
+    cursor: pointer;
+  }
+`;
 
 export default Tag;
