@@ -11,11 +11,15 @@ function Promotion() {
   useEffect(() => {
     dispatch(__getPostsStatics());
   }, []);
+
   const totalPostsCount = useSelector((store) => store.posts.totalPostsCount);
+
   const completedPostsCount = useSelector(
     (store) => store.posts.completedPostsCount
   );
+
   const posts = useSelector((store) => store.posts.posts);
+
   return (
     <Wrapper>
       <Title>
