@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import styled from "styled-components";
 
 import Button from "../components/Button";
@@ -77,16 +77,20 @@ function Detail({ minHeight }) {
   const [isApplied, setIsApplied] = useState(false);
   useEffect(() => {
     if (applied.length === 0) return;
-    applied.findIndex((v) => v.postId == id) > 0
-      ? setIsApplied(true)
-      : setIsApplied(false);
+    applied.findIndex((v) => v.postId == id) < 0
+      ? setIsApplied(false)
+      : setIsApplied(true);
   }, [applied]);
-
   useEffect(() => {
     if (applied.length === 0) {
       dispatch(__getAppliedStudies(localStorage.getItem("userId")));
     }
   }, []);
+
+  const [applicants, setApplicants] = useState(post.applicants);
+  useEffect(() => {
+    setApplicants(post.applicants);
+  }, [post]);
 
   const handleApply = () => {
     dispatch(__applyStudy(id));
@@ -130,13 +134,11 @@ function Detail({ minHeight }) {
                   <Progressbar
                     width={50}
                     denominator={post.headCount}
-                    numerator={post.applicants.length}
+                    numerator={applicants.length}
                   ></Progressbar>
                   <ProgressInfoText>
                     {ProgressMsg(
-                      Math.trunc(
-                        (post.applicants.length / post.headCount) * 100
-                      )
+                      Math.trunc((applicants.length / post.headCount) * 100)
                     )}
                   </ProgressInfoText>
                 </ProgressbarWrapper>
@@ -181,9 +183,13 @@ function Detail({ minHeight }) {
                     📜 {`${post.nickname} 선장님이 이끌었던 스터디`}
                   </Label>
                   <StudyTitleBoxWrapper>
-                    {post.exPosts.map((v) => (
-                      <StudyTitleBox key={v.postId}>{v.title}</StudyTitleBox>
-                    ))}
+                    <StudyBoxContainer>
+                      {post.exPosts.map((v) => (
+                        <StudyTitleBox key={v.postId}>
+                          <Link to={`/post/${v.postId}`}>{v.title}</Link>
+                        </StudyTitleBox>
+                      ))}
+                    </StudyBoxContainer>
                   </StudyTitleBoxWrapper>
                 </DescriptionBox>
                 <InfoBoxWrapper>
@@ -370,11 +376,14 @@ const DescriptionBox = styled.div`
 const StudyTitleBoxWrapper = styled.div`
   width: 100%;
   padding: 10px 0;
+  overflow-x: auto;
+`;
+
+const StudyBoxContainer = styled.div`
+  width: auto;
   display: flex;
-  flex-direction: row;
   flex-wrap: nowrap;
   gap: 20px;
-  overflow-x: auto;
   ::after {
     content: "";
     display: block;
@@ -383,12 +392,17 @@ const StudyTitleBoxWrapper = styled.div`
 `;
 
 const StudyTitleBox = styled.div`
-  float: right;
+  float: left;
+  width: 200px;
   padding: 20px;
+  flex: 0 0 200px;
   border: 3px solid ${(props) => props.theme.mainColor};
   border-radius: 15px;
   font-size: 20px;
   font-weight: 600;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const InfoBoxWrapper = styled.div`
