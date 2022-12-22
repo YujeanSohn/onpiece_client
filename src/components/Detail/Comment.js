@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
-import Button from "./Button";
-import dateTimeParser from "../tools/dateTimeParser";
+import Button from "../Button";
+import dateTimeParser from "../../tools/dateTimeParser";
 
 import {
   __deleteComment,
   __updateComment,
-} from "../redux/modules/CommentsSlice";
-import { useDispatch, useSelector } from "react-redux";
+} from "../../redux/modules/CommentsSlice";
 
 function Comment({
   comment: { commentId, userId, nickname, comment, updatedAt },
