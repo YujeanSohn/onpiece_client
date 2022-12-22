@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
@@ -10,7 +10,7 @@ import {
   __getAppliedStudies,
   __getFinishedStudy,
   __getUserInfo,
-  __userDescriptionUpdate,
+  __updateUserDescription,
 } from "../redux/modules/UserSlice";
 
 function User() {
@@ -22,47 +22,37 @@ function User() {
 
   const { id } = useParams();
 
-  const [description, setDescription] = useState();
-  const [isModify, setIsModify] = useState(false);
+  const [description, setDescription] = useState("");
+  useEffect(() => {
+    if (!userInfo?.description) return;
+    setDescription(userInfo.description);
+  }, [userInfo]);
 
-  const modifyCancel = () => {
-    setIsModify(!isModify);
-  };
-
-  const onUpdateHandler = (event) => {
+  const handleDescriptionUpdate = (event) => {
     setDescription(event.currentTarget.value);
   };
 
-  const onEditHandler = async () => {
-    dispatch(__userDescriptionUpdate({ id, description: description })).then(
-      setIsTextFilled(
-        !description?.length ? (
-          <IntroEmpty>!입력하신 소개글이 없습니다!</IntroEmpty>
-        ) : (
-          description
-        )
-      ),
-      setIsModify(!isModify)
-    );
+  const ref = useRef();
+  const [isModify, setIsModify] = useState(false);
+  const handleModify = () => {
+    setIsModify(!isModify);
   };
 
-  const [isTextFilled, setIsTextFilled] = useState("");
+  useEffect(() => {
+    if (!ref?.current) return;
+    if (isModify) ref.current.focus();
+  }, [isModify]);
+
+  const handleExecuteUpdate = async () => {
+    dispatch(__updateUserDescription({ id, description }));
+    setIsModify(!isModify);
+  };
 
   useEffect(() => {
     dispatch(__getAppliedStudies(id));
     dispatch(__getFinishedStudy(id));
     dispatch(__getUserInfo(id));
   }, []);
-
-  useEffect(() => {
-    setIsTextFilled(
-      !userInfo?.description ? (
-        <IntroEmpty>!입력하신 소개글이 없습니다!</IntroEmpty>
-      ) : (
-        userInfo.description
-      )
-    );
-  }, [userInfo]);
 
   return (
     <Wrapper>
@@ -74,27 +64,42 @@ function User() {
             <Email>
               <Label>이메일</Label> <>{userInfo.email}</>
             </Email>
-            <Introduce>
+            <Description>
               <Label>내 소개글</Label>
               {isModify === false ? (
-                <>{isTextFilled}</>
+                <>
+                  {description.length === 0 ? (
+                    <EmptyDescription>
+                      아직 작성한 내 소개글이 없습니다
+                    </EmptyDescription>
+                  ) : (
+                    description
+                  )}
+                </>
               ) : (
-                <EditInput onChange={onUpdateHandler} />
+                <Input
+                  ref={ref}
+                  value={description}
+                  onChange={handleDescriptionUpdate}
+                />
               )}
-            </Introduce>
+            </Description>
           </UserInfoBox>
           <BtnWrapper>
             {isModify !== false ? (
               <>
-                <Button text="내 소개글 수정" handler={onEditHandler}></Button>
+                <Button
+                  text="내 소개글 수정"
+                  handler={handleExecuteUpdate}
+                ></Button>
                 <Button
                   type="cancel"
                   text="취소"
-                  handler={modifyCancel}
+                  handler={handleModify}
                 ></Button>
               </>
             ) : (
-              <Button text="내 소개글 수정" handler={modifyCancel}></Button>
+              <Button text="내 소개글 수정" handler={handleModify}></Button>
             )}
           </BtnWrapper>
         </TopContent>
@@ -104,7 +109,7 @@ function User() {
             <InfoBox>아직 탑승한 스터디가 없습니다</InfoBox>
           ) : (
             applied.map((post) => (
-              <Post key={post.postId} post={post} width={20} />
+              <Post key={post.postId} post={post} isApplied={true} />
             ))
           )}
         </StudyBox>
@@ -114,7 +119,7 @@ function User() {
             <InfoBox>아직 탑승한 스터디가 없습니다</InfoBox>
           ) : (
             finished.map((post) => (
-              <Post key={post.postId} post={post} width={20} />
+              <Post key={post.postId} post={post} isPublisher={true} />
             ))
           )}
         </StudyBox>
@@ -176,19 +181,23 @@ const StudyType = styled.div`
 const StudyBox = styled.div`
   margin-top: 20px;
   width: 100%;
+  height: 600px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  overflow-x: auto;
+  overflow-y: auto;
 `;
 
 const InfoBox = styled.div`
   width: 100%;
-  height: 100px;
-  line-height: 100px;
-  background-color: rgba(255, 255, 255, 0.5);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 15px;
-  text-align: center;
+  font-weight: 800;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: ${(props) => props.theme.mainColor};
 `;
 
 const Email = styled.div`
@@ -201,17 +210,17 @@ const Label = styled.div`
   float: left;
 `;
 
-const IntroEmpty = styled.div`
+const EmptyDescription = styled.div`
   color: tomato;
 `;
 
-const Introduce = styled.div`
+const Description = styled.div`
   margin-left: 20px;
   font-weight: bold;
   display: flex;
 `;
 
-const EditInput = styled.textarea`
+const Input = styled.textarea`
   width: 80%;
   height: 50px;
   overflow: auto;

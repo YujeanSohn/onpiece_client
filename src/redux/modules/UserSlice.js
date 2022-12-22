@@ -117,16 +117,16 @@ export const __getUserInfo = createAsyncThunk(
   }
 );
 
-export const __userDescriptionUpdate = createAsyncThunk(
-  "userDescUpdate",
+export const __updateUserDescription = createAsyncThunk(
+  "updateUserDescription",
   async (payload, thunkAPI) => {
     try {
       const { data } = await client.put(`/users/${payload.id}`, {
         description: payload.description,
       });
-      return thunkAPI.fulfillWithValue(data);
+      return thunkAPI.fulfillWithValue(payload.description);
     } catch (e) {
-      alert(`userDescriptionUpdate: ${e}`);
+      alert(`updateUserDescription: ${e}`);
     }
   }
 );
@@ -225,6 +225,9 @@ const userSlice = createSlice({
       .addCase(__getUserInfo.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userInfo = action.payload;
+      })
+      .addCase(__updateUserDescription.fulfilled, (state, action) => {
+        state.userInfo = { ...state.userInfo, descrption: action.payload };
       });
   },
 });
