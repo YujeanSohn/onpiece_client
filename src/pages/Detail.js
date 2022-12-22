@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -10,6 +10,7 @@ import dateTimeParser from "../tools/dateTimeParser";
 import CommentList from "../components/CommentList";
 
 import { __deletePost, __getPost } from "../redux/modules/PostsSlice";
+import { __applyStudy, __dropStudy } from "../redux/modules/UserSlice";
 
 function Detail({ minHeight }) {
   const { id } = useParams();
@@ -68,6 +69,21 @@ function Detail({ minHeight }) {
     navigate(`/`);
   };
 
+  const applied = useSelector((store) => store.user.applied);
+  const [isApplied, setIsApplied] = useState(false);
+  useEffect(() => {
+    applied.findIndex((v) => v.postId === id) > 0
+      ? setIsApplied(true)
+      : setIsApplied(false);
+  }, [applied]);
+  const handleApply = () => {
+    dispatch(__applyStudy(id));
+  };
+
+  const handleDrop = () => {
+    dispatch(__dropStudy(id));
+  };
+
   return (
     <Wrapper minHeight={`${minHeight}px`}>
       <Content>
@@ -110,7 +126,19 @@ function Detail({ minHeight }) {
                     )}
                   </ProgressInfoText>
                 </ProgressbarWrapper>
-                <Button text="탑승하기" disabled={post.userId === userId} />
+                {isApplied ? (
+                  <Button
+                    text="탑승하기"
+                    disabled={post.userId === userId}
+                    handler={handleApply}
+                  />
+                ) : (
+                  <Button
+                    text="하차하기"
+                    disabled={post.userId === userId}
+                    handler={handleDrop}
+                  />
+                )}
               </ProgressInfoWrapper>
             </TopContent>
             <TagBoxWrapper>
