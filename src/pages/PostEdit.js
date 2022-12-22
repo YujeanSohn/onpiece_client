@@ -26,7 +26,7 @@ function PostEdit() {
         <ContentHeader>
           <PageTitle>스터디 수정하기</PageTitle>
         </ContentHeader>
-        <PostForm post={initialPost}></PostForm>
+        <PostForm post={initialPost} type="edit"></PostForm>
       </Content>
     </Wrapper>
   );

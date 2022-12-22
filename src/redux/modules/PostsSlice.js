@@ -43,9 +43,21 @@ export const __addPost = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const { data } = await client.post(`/posts`, payload);
-      return thunkAPI.fulfillWithValue(data);
+      return thunkAPI.fulfillWithValue(data.createdPost);
     } catch (e) {
       alert(`addPostError: ${e}`);
+    }
+  }
+);
+
+export const __updatePost = createAsyncThunk(
+  "updatePost",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await client.put(`/posts/${payload.postId}`, payload);
+      return thunkAPI.fulfillWithValue(data);
+    } catch (e) {
+      alert(`updatePostError: ${e}`);
     }
   }
 );
@@ -54,7 +66,7 @@ export const __deletePost = createAsyncThunk(
   "deletePost",
   async (payload, thunkAPI) => {
     try {
-      await client.delete(`/posts/${payload.postId}`);
+      await client.delete(`/posts/${payload}`);
       return thunkAPI.fulfillWithValue(payload);
     } catch (e) {
       alert(`deletePostError: ${e}`);
@@ -149,15 +161,27 @@ const postsSlice = createSlice({
         state.isLoading = false;
         state.posts = [...state.posts, action.payload];
       })
-      .addCase(__deletePost.pending, (state, action) => {
+      .addCase(__updatePost.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__updatePost.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const posts = [...state.posts];
+        state.posts = posts.map((post) => {
+          if (post.postId === action.payload.postId) {
+            return action.payload;
+          }
+
+          return post;
+        });
+      })
+      .addCase(__deletePost.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(__deletePost.fulfilled, (state, action) => {
         state.isLoading = false;
         const posts = [...state.posts];
-        state.posts = posts.filter(
-          (post) => post.postId !== action.payload.postId
-        );
+        state.posts = posts.filter((post) => post.postId !== action.payload);
       });
   },
 });

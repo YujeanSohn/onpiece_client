@@ -29,7 +29,7 @@ function PostCreate() {
         <ContentHeader>
           <PageTitle>스터디 모집하기</PageTitle>
         </ContentHeader>
-        <PostForm post={initialPost}></PostForm>
+        <PostForm post={initialPost} type="add"></PostForm>
       </Content>
     </Wrapper>
   );
