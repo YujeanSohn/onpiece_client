@@ -333,6 +333,7 @@ const TextBoxWrapper = styled.div`
 
 const TextBox = styled.div`
   height: 100%;
+  white-space: pre-wrap;
   overflow-y: auto;
 `;
 
