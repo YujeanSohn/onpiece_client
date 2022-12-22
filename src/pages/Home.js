@@ -19,7 +19,7 @@ function Home({ minHeight }) {
   useEffect(() => {
     dispatch(__getPosts());
     dispatch(__getAppliedStudies(userId));
-  }, [dispatch]);
+  }, []);
   const applied = useSelector((store) => store.user.applied);
 
   const posts = useSelector((store) => store.posts.posts);

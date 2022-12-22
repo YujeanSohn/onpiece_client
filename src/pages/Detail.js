@@ -10,7 +10,11 @@ import dateTimeParser from "../tools/dateTimeParser";
 import CommentList from "../components/Detail/CommentList";
 
 import { __deletePost, __getPost } from "../redux/modules/PostsSlice";
-import { __applyStudy, __dropStudy } from "../redux/modules/UserSlice";
+import {
+  __applyStudy,
+  __dropStudy,
+  __getAppliedStudies,
+} from "../redux/modules/UserSlice";
 
 function Detail({ minHeight }) {
   const { id } = useParams();
@@ -72,16 +76,26 @@ function Detail({ minHeight }) {
   const applied = useSelector((store) => store.user.applied);
   const [isApplied, setIsApplied] = useState(false);
   useEffect(() => {
-    applied.findIndex((v) => v.postId === id) > 0
+    if (applied.length === 0) return;
+    applied.findIndex((v) => v.postId == id) > 0
       ? setIsApplied(true)
       : setIsApplied(false);
   }, [applied]);
+
+  useEffect(() => {
+    if (applied.length === 0) {
+      dispatch(__getAppliedStudies(localStorage.getItem("userId")));
+    }
+  }, []);
+
   const handleApply = () => {
     dispatch(__applyStudy(id));
+    dispatch(__getPost(id));
   };
 
   const handleDrop = () => {
     dispatch(__dropStudy(id));
+    dispatch(__getPost(id));
   };
 
   return (
@@ -128,15 +142,15 @@ function Detail({ minHeight }) {
                 </ProgressbarWrapper>
                 {isApplied ? (
                   <Button
-                    text="탑승하기"
-                    disabled={post.userId === userId}
-                    handler={handleApply}
-                  />
-                ) : (
-                  <Button
                     text="하차하기"
                     disabled={post.userId === userId}
                     handler={handleDrop}
+                  />
+                ) : (
+                  <Button
+                    text="탑승하기"
+                    disabled={post.userId === userId}
+                    handler={handleApply}
                   />
                 )}
               </ProgressInfoWrapper>
