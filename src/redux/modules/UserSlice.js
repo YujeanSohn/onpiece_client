@@ -59,10 +59,10 @@ export const __signIn = createAsyncThunk(
 
 export const __applyStudy = createAsyncThunk(
   "applyStudy",
-  async (payload, thunkAPI) => {
+  async (postId, thunkAPI) => {
     try {
-      await client.post(`/posts/${payload.postId}/apply`);
-      return thunkAPI.fulfillWithValue(payload);
+      const { data } = await client.post(`/posts/${postId}/apply`);
+      return thunkAPI.fulfillWithValue(data.appliedStudy);
     } catch (e) {
       alert(`applyStudyError: ${e}`);
     }
@@ -71,10 +71,10 @@ export const __applyStudy = createAsyncThunk(
 
 export const __dropStudy = createAsyncThunk(
   "dropStudy",
-  async (payload, thunkAPI) => {
+  async (postId, thunkAPI) => {
     try {
-      await client.delete(`/posts/${payload.postId}/apply`);
-      return thunkAPI.fulfillWithValue(payload);
+      await client.delete(`/posts/${postId}/apply`);
+      return thunkAPI.fulfillWithValue(postId);
     } catch (e) {
       alert(`dropStudyError: ${e}`);
     }
