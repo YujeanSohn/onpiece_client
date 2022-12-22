@@ -54,7 +54,7 @@ export const __updatePost = createAsyncThunk(
   "updatePost",
   async (payload, thunkAPI) => {
     try {
-      const { data } = await client.put(`/posts/${payload.postId}`, payload);
+      const { data } = await client.put(`/posts/${payload.id}`, payload.post);
       return thunkAPI.fulfillWithValue(data);
     } catch (e) {
       alert(`updatePostError: ${e}`);

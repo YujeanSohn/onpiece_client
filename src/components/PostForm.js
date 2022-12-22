@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import Button from "./Button";
@@ -68,6 +68,8 @@ function PostForm({
     setStudyStartDate(startDay);
     setStudyEndDate(endDay);
   };
+
+  const { id } = useParams();
 
   const handleSelect = ({ target: { value } }) => {
     for (let i = 0; i < selectedOptions.length; i++) {
@@ -164,7 +166,7 @@ function PostForm({
         navigate("/");
         return;
       case "edit":
-        dispatch(__updatePost(post));
+        dispatch(__updatePost({ id, post }));
         navigate("/");
         return;
     }
