@@ -14,6 +14,10 @@ import {
 } from "../redux/modules/UserSlice";
 
 function User() {
+  const applied = useSelector((store) => store.user.applied);
+  const finished = useSelector((store) => store.user.finished);
+  const userInfo = useSelector((store) => store.user.userInfo);
+
   const dispatch = useDispatch();
 
   const { id } = useParams();
@@ -31,16 +35,18 @@ function User() {
 
   const onEditHandler = async () => {
     dispatch(__userDescriptionUpdate({ id, description: description })).then(
-      setisTextFilled(description),
+      setIsTextFilled(
+        !description?.length ? (
+          <IntroEmpty>!입력하신 소개글이 없습니다!</IntroEmpty>
+        ) : (
+          description
+        )
+      ),
       setIsModify(!isModify)
     );
   };
 
-  const applied = useSelector((store) => store.user.applied);
-  const finished = useSelector((store) => store.user.finished);
-  const userInfo = useSelector((store) => store.user.userinfo);
-
-  const [isTextFilled, setisTextFilled] = useState("");
+  const [isTextFilled, setIsTextFilled] = useState("");
 
   useEffect(() => {
     dispatch(__getAppliedStudies(id));
@@ -49,12 +55,12 @@ function User() {
   }, []);
 
   useEffect(() => {
-    if (userInfo?.description === null || userInfo?.description === undefined)
-      return;
-    setisTextFilled(
-      userInfo.description.length === 0
-        ? "!입력하신 소개글이 없습니다!"
-        : userInfo.description
+    setIsTextFilled(
+      !userInfo?.description ? (
+        <IntroEmpty>!입력하신 소개글이 없습니다!</IntroEmpty>
+      ) : (
+        userInfo.description
+      )
     );
   }, [userInfo]);
 
@@ -62,14 +68,14 @@ function User() {
     <Wrapper>
       <Content>
         <Title>마이페이지</Title>
-        <SubTitle>내정보</SubTitle>
+        <SubTitle>내 정보</SubTitle>
         <TopContent>
           <UserInfoBox>
             <Email>
-              이메일 <>{userInfo.email}</>
+              <Label>이메일</Label> <>{userInfo.email}</>
             </Email>
             <Introduce>
-              내 소개글
+              <Label>내 소개글</Label>
               {isModify === false ? (
                 <>{isTextFilled}</>
               ) : (
@@ -81,7 +87,11 @@ function User() {
             {isModify !== false ? (
               <>
                 <Button text="내 소개글 수정" handler={onEditHandler}></Button>
-                <Button text="취소" handler={modifyCancel}></Button>
+                <Button
+                  type="cancel"
+                  text="취소"
+                  handler={modifyCancel}
+                ></Button>
               </>
             ) : (
               <Button text="내 소개글 수정" handler={modifyCancel}></Button>
@@ -115,6 +125,7 @@ function User() {
 
 const Wrapper = styled.div`
   width: 100%;
+  background-color: ${(props) => props.theme.mainColor};
 `;
 
 const Content = styled.div`
@@ -155,6 +166,7 @@ const BtnWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  gap: 20px;
 `;
 
 const StudyType = styled.div`
@@ -182,6 +194,15 @@ const InfoBox = styled.div`
 const Email = styled.div`
   margin-left: 20px;
   font-weight: bold;
+`;
+
+const Label = styled.div`
+  width: 10%;
+  float: left;
+`;
+
+const IntroEmpty = styled.div`
+  color: tomato;
 `;
 
 const Introduce = styled.div`
