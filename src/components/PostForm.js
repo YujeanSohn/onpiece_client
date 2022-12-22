@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 import Button from "./Button";
 import Tag from "./Tag";
@@ -139,6 +140,7 @@ function PostForm({
     return true;
   };
 
+  const navigate = useNavigate();
   const postUpdate = () => {
     if (!isValidated()) return;
 
@@ -156,6 +158,7 @@ function PostForm({
     };
 
     dispatch(__addPost(post));
+    navigate("/");
   };
 
   return (
