@@ -7,7 +7,11 @@ import Button from "../components/Button";
 import Post from "../components/Post";
 
 import { __getPosts } from "../redux/modules/PostsSlice";
-import { __getAppliedStudies } from "../redux/modules/UserSlice";
+import {
+  __getAppliedStudies,
+  __applyStudy,
+  __dropStudy,
+} from "../redux/modules/UserSlice";
 
 function Home({ minHeight }) {
   const dispatch = useDispatch();
@@ -22,6 +26,7 @@ function Home({ minHeight }) {
   }, []);
   const applied = useSelector((store) => store.user.applied);
 
+  const isLoading = useSelector((store) => store.posts.isLoading);
   const posts = useSelector((store) => store.posts.posts);
   const [lineHeight, setLineHeight] = useState(0);
   const ref = useRef();
@@ -37,6 +42,16 @@ function Home({ minHeight }) {
     navigate("/post");
   };
 
+  const handleApplyStudy = (postId) => {
+    dispatch(__applyStudy(postId));
+    dispatch(__getPosts());
+  };
+
+  const handleDropStudy = (postId) => {
+    dispatch(__dropStudy(postId));
+    dispatch(__getPosts());
+  };
+
   return (
     <Wrapper minHeight={`${minHeight}px`}>
       <Content>
@@ -45,28 +60,41 @@ function Home({ minHeight }) {
           <Button text={`스터디 모집하기 🛟`} handler={handleNavigate} />
         </ContentHeader>
         <PostList>
-          {posts.length === 0 ? (
+          {isLoading ? (
             <InfoBox lineHeight={`${lineHeight}px`}>
-              🚣‍♂ 새로운 스터디를 모집해보세요!
+              데이터를 불러오는중 입니다.
             </InfoBox>
           ) : (
-            posts.map((post) => {
-              let isApplied = false;
-              for (let i = 0; i < applied.length; i++) {
-                if (applied[i].postId === post.postId) {
-                  isApplied = true;
-                }
-              }
+            <>
+              {posts.length === 0 ? (
+                <InfoBox lineHeight={`${lineHeight}px`}>
+                  🚣‍♂ 새로운 스터디를 모집해보세요!
+                </InfoBox>
+              ) : (
+                posts.map((post) => {
+                  let isApplied = false;
+                  for (let i = 0; i < applied.length; i++) {
+                    if (applied[i].postId == post.postId) {
+                      isApplied = true;
+                    }
+                  }
 
-              return (
-                <Post
-                  key={post.postId}
-                  post={post}
-                  isApplied={isApplied}
-                  isPublisher={userId === post.userId}
-                />
-              );
-            })
+                  return (
+                    <Post
+                      key={post.postId}
+                      post={post}
+                      isApplied={isApplied}
+                      isPublisher={userId === post.userId}
+                      handler={
+                        isApplied
+                          ? () => handleDropStudy(post.postId)
+                          : () => handleApplyStudy(post.postId)
+                      }
+                    />
+                  );
+                })
+              )}
+            </>
           )}
         </PostList>
       </Content>

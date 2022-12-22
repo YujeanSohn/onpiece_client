@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import Tag from "./Tag";
@@ -8,8 +8,15 @@ import Progressbar from "./Progressbar";
 import Button from "./Button";
 import dateTimeParser from "../tools/dateTimeParser";
 
-function Post({ width = 18, post, isApplied = false, isPublisher = false }) {
+function Post({
+  width = 18,
+  post,
+  isApplied = false,
+  isPublisher = false,
+  handler,
+}) {
   const navigate = useNavigate();
+
   const isLogin = useSelector((store) => store.user.isLogin);
 
   return (
@@ -51,12 +58,13 @@ function Post({ width = 18, post, isApplied = false, isPublisher = false }) {
       </InfoBox>
       <BtnWrapper show={isLogin}>
         {isApplied ? (
-          <Button type="cancel" text="하차하기" />
+          <Button type="cancel" text="하차하기" handler={handler} />
         ) : (
           <Button
             type="main"
             text="탑승하기"
             disabled={post.headCount === post.applicants.length || isPublisher}
+            handler={handler}
           />
         )}
         <Button
