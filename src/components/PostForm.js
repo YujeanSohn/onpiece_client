@@ -12,7 +12,7 @@ import {
   unixLocalTimeConverter,
 } from "../tools/timeConverter";
 
-import { __addPost } from "../redux/modules/PostsSlice";
+import { __addPost, __updatePost } from "../redux/modules/PostsSlice";
 
 function PostForm({
   post: {
@@ -27,6 +27,7 @@ function PostForm({
     startDay = "0000-00-00",
     endDay = "0000-00-00",
   },
+  type,
 }) {
   const dispatch = useDispatch();
   const titleRef = useRef();
@@ -157,8 +158,16 @@ function PostForm({
       endDay: studyEndDate,
     };
 
-    dispatch(__addPost(post));
-    navigate("/");
+    switch (type) {
+      case "add":
+        dispatch(__addPost(post));
+        navigate("/");
+        return;
+      case "edit":
+        dispatch(__updatePost(post));
+        navigate("/");
+        return;
+    }
   };
 
   return (
