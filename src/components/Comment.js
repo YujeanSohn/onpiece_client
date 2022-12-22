@@ -13,7 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 function Comment({
   comment: { commentId, userId, nickname, comment, updatedAt },
 }) {
-  const loginUserId = useSelector((store) => store.user.id);
+  const userInfo = useSelector((store) => store.user.userInfo);
+  const loginUserId = !userInfo?.userId
+    ? localStorage.getItem("userId")
+    : userInfo.userId;
+
   const dispatch = useDispatch();
   const ref = useRef();
   const [isModify, setIsModify] = useState(false);

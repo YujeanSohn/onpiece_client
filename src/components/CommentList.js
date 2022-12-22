@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
@@ -79,4 +79,4 @@ const InfoBox = styled.div`
   font-size: 12px;
 `;
 
-export default CommentList;
+export default memo(CommentList);
