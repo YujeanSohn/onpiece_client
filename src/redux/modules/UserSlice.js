@@ -86,7 +86,7 @@ export const __getAppliedStudies = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const { data } = await client.get(`/users/${userId}/apply`);
-      return thunkAPI.fulfillWithValue(data);
+      return thunkAPI.fulfillWithValue(data.data);
     } catch (e) {
       alert(`getAppliedStudiesError: ${e}`);
     }
