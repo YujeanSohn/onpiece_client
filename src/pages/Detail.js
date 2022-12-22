@@ -7,7 +7,7 @@ import Button from "../components/Button";
 import Progressbar from "../components/Progressbar";
 import Tag from "../components/Tag";
 import dateTimeParser from "../tools/dateTimeParser";
-import CommentList from "../components/CommentList";
+import CommentList from "../components/Detail/CommentList";
 
 import { __deletePost, __getPost } from "../redux/modules/PostsSlice";
 import { __applyStudy, __dropStudy } from "../redux/modules/UserSlice";

@@ -2,10 +2,10 @@ import React, { useState, useEffect, memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import Button from "../components/Button";
-import Comment from "../components/Comment";
+import Button from "../Button";
+import Comment from "./Comment";
 
-import { __addComment, __getComments } from "../redux/modules/CommentsSlice";
+import { __addComment, __getComments } from "../../redux/modules/CommentsSlice";
 
 function CommentList({ postId }) {
   const dispatch = useDispatch();
